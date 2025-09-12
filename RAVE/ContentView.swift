@@ -34,14 +34,14 @@ struct ContentView: View {
 enum RAVETab: String, CaseIterable {
     case map = "Map"
     case topClubs = "Top Clubs" 
-    case groups = "Groups"
+    case crew = "Crew"
     case alerts = "Alerts"
     
     var icon: String {
         switch self {
         case .map: return "map.fill"
         case .topClubs: return "crown.fill"
-        case .groups: return "person.3.fill"
+        case .crew: return "person.3.fill"
         case .alerts: return "bell.fill"
         }
     }
@@ -50,7 +50,7 @@ enum RAVETab: String, CaseIterable {
         switch self {
         case .map: return "map.circle.fill"
         case .topClubs: return "crown.circle.fill"
-        case .groups: return "person.3.circle.fill"
+        case .crew: return "person.3.circle.fill"
         case .alerts: return "bell.circle.fill"
         }
     }
@@ -84,7 +84,7 @@ struct PremiumTabView: View {
                     MapView()
                 case .topClubs:
                     TopClubsView()
-                case .groups:
+                case .crew:
                     GroupsView()
                 case .alerts:
                     AlertsView()
@@ -92,13 +92,13 @@ struct PremiumTabView: View {
             }
             .animation(.easeInOut(duration: 0.3), value: selectedTab)
             
-            // Floating Tab Bar
-            FloatingTabBar(selectedTab: $selectedTab, namespace: tabAnimation)
+            // Native Tab Bar
+            NativeTabBar(selectedTab: $selectedTab, namespace: tabAnimation)
         }
     }
 }
 
-struct FloatingTabBar: View {
+struct NativeTabBar: View {
     @Binding var selectedTab: RAVETab
     let namespace: Namespace.ID
     
@@ -123,23 +123,10 @@ struct FloatingTabBar: View {
                 .accessibleTabItem(tabName: tab.rawValue, isSelected: selectedTab == tab)
             }
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 12)
-        .background(.ultraThinMaterial, in: Capsule())
-        .overlay(
-            Capsule()
-                .stroke(
-                    LinearGradient(
-                        colors: [.white.opacity(0.3), .clear, .white.opacity(0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1.5
-                )
-        )
-        .shadow(color: .ravePurple.opacity(0.2), radius: 20, x: 0, y: 10)
-        .padding(.horizontal, 10)
-        .padding(.bottom, 34)
+        .padding(.horizontal, 0)
+        .padding(.vertical, 8)
+        .background(.regularMaterial)
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 }
 
@@ -151,30 +138,14 @@ struct TabBarItem: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 4) {
-                ZStack {
-                    if isSelected {
-                        Circle()
-                            .fill(Color.ravePurple)
-                            .frame(width: 32, height: 32)
-                            .matchedGeometryEffect(id: "selectedTab", in: namespace)
-                            .shadow(color: .ravePurple.opacity(0.6), radius: 8, x: 0, y: 2)
-                    }
-                    
-                    Image(systemName: isSelected ? tab.selectedIcon : tab.icon)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(isSelected ? .white : .white.opacity(0.6))
-                        .scaleEffect(isSelected ? 1.1 : 1.0)
-                        .animation(.interactiveSpring(response: 0.4, dampingFraction: 0.7), value: isSelected)
-                }
-                
-                Text(tab.rawValue)
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
-                    .foregroundColor(isSelected ? .white : .white.opacity(0.5))
-                    .animation(.easeInOut(duration: 0.2), value: isSelected)
-            }
+            Image(systemName: isSelected ? tab.selectedIcon : tab.icon)
+                .font(.system(size: 24, weight: .medium))
+                .foregroundColor(isSelected ? .ravePurple : .white.opacity(0.6))
+                .scaleEffect(isSelected ? 1.0 : 0.9)
+                .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
         .frame(maxWidth: .infinity)
+        .frame(height: 50)
         .contentShape(Rectangle())
     }
 }
@@ -203,7 +174,7 @@ struct SplashScreen: View {
                 // Main Logo
                 Text("RAVE")
                     .font(.system(size: 72, weight: .black, design: .rounded))
-                    .neonText()
+                    .foregroundColor(.ravePurple)
                     .scaleEffect(logoScale)
                     .opacity(logoOpacity)
                     .animation(.interactiveSpring(response: 1.2, dampingFraction: 0.6), value: logoScale)

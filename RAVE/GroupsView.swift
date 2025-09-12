@@ -9,69 +9,73 @@ import SwiftUI
 
 struct GroupsView: View {
     @State private var partyGroups: [PartyGroup] = []
-    @State private var showCreateGroup = false
+    @State private var showCreateCrew = false
     
     var body: some View {
-        NavigationStack {
-            if partyGroups.isEmpty {
-                RAVEEmptyStateView(
-                    title: "No Party Groups",
-                    subtitle: "Join or create a group to start connecting with people at venues",
-                    systemImage: "person.3"
+        ZStack {
+            // Background Layer
+            Color.deepBackground
+                .ignoresSafeArea(.all)
+            
+            if PerformanceOptimizer.shouldShowParticles() {
+                ParticleView(
+                    count: PerformanceOptimizer.particleCount(defaultCount: 15), 
+                    color: .ravePurple.opacity(0.2)
                 )
-                .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
-                        color: .ravePurple.opacity(0.2)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
+                .ignoresSafeArea(.all)
+                .allowsHitTesting(false)
             }
-        )
-            } else {
-                List(partyGroups) { group in
-                    NavigationLink(destination: GroupDetailView(group: group)) {
-                        PartyGroupRowView(group: group)
+            
+            // Content Layer
+            NavigationStack {
+                if partyGroups.isEmpty {
+                    RAVEEmptyStateView(
+                        title: "No Party Crews",
+                        subtitle: "Join or create a crew to start connecting with people at venues",
+                        systemImage: "person.3"
+                    )
+                } else {
+                    List(partyGroups) { group in
+                        NavigationLink(destination: CrewDetailView(group: group)) {
+                            PartyGroupRowView(group: group)
+                        }
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
                     }
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-                }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
-                .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
-                        color: .ravePurple.opacity(0.2)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
             }
-        )
-            }
-        }
-        .navigationTitle("Groups")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { showCreateGroup = true }) {
-                    Image(systemName: "plus")
-                        .foregroundColor(.ravePurple)
+            .navigationTitle("Crew")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { showCreateCrew = true }) {
+                        Image(systemName: "plus")
+                            .foregroundColor(.ravePurple)
+                    }
                 }
             }
-        }
-        .sheet(isPresented: $showCreateGroup) {
-            CreateGroupView()
-        }
-        .onAppear {
-            setupMockData()
+            .sheet(isPresented: $showCreateCrew) {
+                CreateCrewView()
+            }
+            .onAppear {
+                setupMockData()
+            }
+            
+            // Header Gradient Fade
+            VStack {
+                LinearGradient(
+                    colors: [.black, .black.opacity(0.4), .clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 100)
+                .allowsHitTesting(false)
+                
+                Spacer()
+            }
+            .ignoresSafeArea(edges: .top)
         }
     }
     
@@ -166,31 +170,51 @@ struct PartyGroupRowView: View {
             }
         }
         .padding()
-        .background(Color.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.cardBackground)
+                
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.regularMaterial.opacity(0.5))
+                
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(.white.opacity(0.2), lineWidth: 1)
+            }
+        )
         .padding(.horizontal, 10)
         .padding(.vertical, 4)
     }
 }
 
-struct CreateGroupView: View {
+struct CreateCrewView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var groupName = ""
+    @State private var crewName = ""
     @State private var selectedVenue: Venue?
     
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Group Name")
+                    Text("Crew Name")
                         .font(RAVEFont.headline)
                         .foregroundColor(.primary)
                     
-                    TextField("Enter group name", text: $groupName)
+                    TextField("Enter crew name", text: $crewName)
                         .font(RAVEFont.body)
                         .padding()
-                        .background(Color.cardBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .background(
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.cardBackground)
+                                
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(.thinMaterial.opacity(0.4))
+                                
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(.white.opacity(0.2), lineWidth: 1)
+                            }
+                        )
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
@@ -221,8 +245,18 @@ struct CreateGroupView: View {
                             .raveGhostButton()
                         }
                         .padding()
-                        .background(Color.cardBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .background(
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.cardBackground)
+                                
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(.regularMaterial.opacity(0.5))
+                                
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(.white.opacity(0.2), lineWidth: 1)
+                            }
+                        )
                     } else {
                         Button("Select Venue") {
                             selectedVenue = LocationManager.createMockVenues().first
@@ -233,15 +267,15 @@ struct CreateGroupView: View {
                 
                 Spacer()
                 
-                Button("Create Group") {
+                Button("Create Crew") {
                     dismiss()
                 }
                 .ravePrimaryButton()
-                .disabled(groupName.isEmpty || selectedVenue == nil)
+                .disabled(crewName.isEmpty || selectedVenue == nil)
             }
             .padding(.horizontal, 10)
             .padding(.vertical)
-            .navigationTitle("New Group")
+            .navigationTitle("New Crew")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -269,13 +303,13 @@ struct CreateGroupView: View {
     }
 }
 
-struct GroupDetailView: View {
+struct CrewDetailView: View {
     let group: PartyGroup
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Group Header
+                // Crew Header
                 VStack(alignment: .leading, spacing: 12) {
                     Text(group.name)
                         .font(RAVEFont.title)
@@ -300,8 +334,18 @@ struct GroupDetailView: View {
                         VibeBadge(status: group.venue.vibeStatus)
                     }
                     .padding()
-                    .background(Color.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.cardBackground)
+                            
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.regularMaterial.opacity(0.5))
+                            
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(.white.opacity(0.2), lineWidth: 1)
+                        }
+                    )
                 }
                 
                 // Members Section
@@ -336,8 +380,18 @@ struct GroupDetailView: View {
                                 Spacer()
                             }
                             .padding(8)
-                            .background(Color.cardBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .background(
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.cardBackground)
+                                    
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(.thinMaterial.opacity(0.4))
+                                    
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(.white.opacity(0.2), lineWidth: 0.5)
+                                }
+                            )
                         }
                     }
                 }
@@ -364,13 +418,23 @@ struct GroupDetailView: View {
                         }
                     }
                     .padding()
-                    .background(Color.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.cardBackground)
+                            
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.regularMaterial.opacity(0.5))
+                            
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(.white.opacity(0.2), lineWidth: 1)
+                        }
+                    )
                 }
             }
             .padding()
         }
-        .navigationTitle("Group Details")
+        .navigationTitle("Crew Details")
         .navigationBarTitleDisplayMode(.inline)
         .background(
             ZStack {

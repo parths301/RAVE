@@ -671,7 +671,7 @@ struct RAVEEmptyStateView: View {
             VStack(spacing: 16) {
                 Text("RAVE")
                     .font(RAVEFont.hero)
-                    .neonText()
+                    .foregroundColor(.ravePurple)
                 
                 Text("Premium Nightlife Experience")
                     .font(RAVEFont.title2)
@@ -681,7 +681,7 @@ struct RAVEEmptyStateView: View {
             // Button Styles
             VStack(spacing: 16) {
                 Button("Join the Party") {}
-                    .neonButton()
+                    .ravePrimaryButton()
                 
                 Button("Discover Venues") {}
                     .glassButton()
@@ -718,7 +718,7 @@ struct RAVEEmptyStateView: View {
                 VStack {
                     Text("VIP Experience")
                         .font(RAVEFont.headline)
-                        .neonText(color: .raveGold)
+                        .foregroundColor(.raveGold)
                     
                     HStack {
                         PulsingLoader(color: .raveGold)

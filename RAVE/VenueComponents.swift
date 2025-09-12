@@ -57,10 +57,10 @@ struct VenueAnnotation: View {
                         .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: isAnimating)
                 }
                 
-                // Venue Name with Neon Text Effect
+                // Venue Name 
                 Text(venue.name.uppercased())
                     .font(.system(size: 9, weight: .black, design: .rounded))
-                    .neonText(color: .white, glowColor: .raveNeon)
+                    .foregroundColor(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
             }
@@ -68,32 +68,17 @@ struct VenueAnnotation: View {
             .padding(.vertical, 10)
             .background(
                 ZStack {
-                    // Glassmorphism Background
+                    // Card Background
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
+                        .fill(Color.cardBackground)
                     
-                    // Premium Gradient Overlay
+                    // Frosted Glass Overlay
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(
-                            LinearGradient(
-                                colors: [.ravePurple.opacity(0.3), .raveNeon.opacity(0.1), .ravePink.opacity(0.2)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .fill(.regularMaterial.opacity(0.8))
                     
-                    // Animated Border
+                    // Simple Border
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(
-                            LinearGradient(
-                                colors: [.white.opacity(0.6), .ravePurple.opacity(0.8), .raveNeon.opacity(0.6)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 2
-                        )
-                        .opacity(isAnimating ? 0.9 : 0.6)
-                        .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
+                        .stroke(.white.opacity(0.3), lineWidth: 1)
                 }
             )
             .shadow(color: .ravePurple.opacity(0.4), radius: 12, x: 0, y: 6)
@@ -124,10 +109,10 @@ struct VenueCardView: View {
             // Premium Header with Floating Dismiss
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    // Venue Name with Neon Glow
+                    // Venue Name
                     Text(venue.name)
                         .font(.system(size: 24, weight: .black, design: .rounded))
-                        .neonText(color: .white, glowColor: .raveNeon)
+                        .foregroundColor(.white)
                     
                     // Location with Glass Text Effect
                     Text(venue.location)
@@ -337,41 +322,17 @@ struct VenueCardView: View {
         .padding(24)
         .background(
             ZStack {
-                // Main glassmorphism background
+                // Card Background
                 RoundedRectangle(cornerRadius: 28)
-                    .fill(.ultraThinMaterial)
+                    .fill(Color.cardBackground)
                 
-                // Subtle gradient overlay
+                // Frosted Glass Overlay
                 RoundedRectangle(cornerRadius: 28)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                .ravePurple.opacity(0.1),
-                                .raveNeon.opacity(0.05),
-                                .ravePink.opacity(0.08)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .fill(.regularMaterial.opacity(0.6))
                 
-                // Premium border with gradient
+                // Simple Border
                 RoundedRectangle(cornerRadius: 28)
-                    .stroke(
-                        LinearGradient(
-                            colors: [
-                                .white.opacity(0.4),
-                                .ravePurple.opacity(0.3),
-                                .raveNeon.opacity(0.2),
-                                .clear
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
-                    )
-                    .opacity(glowOpacity)
-                    .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: glowOpacity)
+                    .stroke(.white.opacity(0.3), lineWidth: 1.5)
             }
         )
         .scaleEffect(cardScale)
@@ -490,13 +451,14 @@ struct VenueDetailView: View {
                 .padding(.horizontal, 10)
                 
                 // Map Section
-                Map(coordinateRegion: .constant(
-                    MKCoordinateRegion(
+                Map(bounds: MapCameraBounds(
+                    centerCoordinateBounds: MKCoordinateRegion(
                         center: venue.coordinate,
                         span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
                     )
-                ), annotationItems: [venue]) { venue in
-                    MapPin(coordinate: venue.coordinate, tint: .ravePurple)
+                )) {
+                    Marker(venue.name, coordinate: venue.coordinate)
+                        .tint(.ravePurple)
                 }
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 12))

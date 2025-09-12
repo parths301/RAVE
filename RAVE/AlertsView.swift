@@ -13,62 +13,66 @@ struct AlertsView: View {
     @State private var notificationsEnabled = false
     
     var body: some View {
-        NavigationStack {
-            if alerts.isEmpty {
-                RAVEEmptyStateView(
-                    title: "No Alerts",
-                    subtitle: notificationsEnabled ? "We'll notify you when the nightlife heats up!" : "Enable notifications to get venue alerts",
-                    systemImage: "bell"
+        ZStack {
+            // Background Layer
+            Color.deepBackground
+                .ignoresSafeArea(.all)
+            
+            if PerformanceOptimizer.shouldShowParticles() {
+                ParticleView(
+                    count: PerformanceOptimizer.particleCount(defaultCount: 20), 
+                    color: .ravePurple.opacity(0.2)
                 )
-                .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 20), 
-                        color: .ravePurple.opacity(0.2)
+                .ignoresSafeArea(.all)
+                .allowsHitTesting(false)
+            }
+            
+            // Content Layer
+            NavigationStack {
+                if alerts.isEmpty {
+                    RAVEEmptyStateView(
+                        title: "No Alerts",
+                        subtitle: notificationsEnabled ? "We'll notify you when the nightlife heats up!" : "Enable notifications to get venue alerts",
+                        systemImage: "bell"
                     )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
+                } else {
+                    List(alerts) { alert in
+                        AlertRowView(alert: alert)
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
             }
-        )
-            } else {
-                List(alerts) { alert in
-                    AlertRowView(alert: alert)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
-                .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 20), 
-                        color: .ravePurple.opacity(0.2)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
+            .navigationTitle("Alerts")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: toggleNotifications) {
+                        Image(systemName: notificationsEnabled ? "bell.fill" : "bell.slash")
+                            .foregroundColor(.ravePurple)
+                    }
                 }
             }
-        )
+            .onAppear {
+                setupMockData()
+                checkNotificationPermissions()
             }
-        }
-        .navigationTitle("Alerts")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: toggleNotifications) {
-                    Image(systemName: notificationsEnabled ? "bell.fill" : "bell.slash")
-                        .foregroundColor(.ravePurple)
-                }
+            
+            // Header Gradient Fade
+            VStack {
+                LinearGradient(
+                    colors: [.black, .black.opacity(0.4), .clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 100)
+                .allowsHitTesting(false)
+                
+                Spacer()
             }
-        }
-        .onAppear {
-            setupMockData()
-            checkNotificationPermissions()
+            .ignoresSafeArea(edges: .top)
         }
     }
     
@@ -190,8 +194,13 @@ struct AlertRowView: View {
                 .font(.title3)
                 .foregroundColor(alert.type.iconColor)
                 .frame(width: 32, height: 32)
-                .background(alert.type.iconColor.opacity(0.2))
-                .clipShape(Circle())
+                .background(
+                    ZStack {
+                        Circle().fill(alert.type.iconColor.opacity(0.2))
+                        Circle().fill(.thinMaterial.opacity(0.3))
+                        Circle().stroke(.white.opacity(0.1), lineWidth: 0.5)
+                    }
+                )
             
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
@@ -235,8 +244,18 @@ struct AlertRowView: View {
             }
         }
         .padding()
-        .background(alert.isRead ? Color.cardBackground.opacity(0.6) : Color.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(alert.isRead ? Color.cardBackground.opacity(0.6) : Color.cardBackground)
+                
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.regularMaterial.opacity(alert.isRead ? 0.3 : 0.5))
+                
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(.white.opacity(0.2), lineWidth: 1)
+            }
+        )
         .padding(.horizontal, 10)
         .padding(.vertical, 4)
         .onTapGesture {

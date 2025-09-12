@@ -29,21 +29,23 @@ struct MapView: View {
                     .allowsHitTesting(false)
                 
                 // Enhanced MapKit Integration
-                Map(coordinateRegion: $locationManager.region, 
-                    showsUserLocation: true,
-                    annotationItems: venues) { venue in
-                    MapAnnotation(coordinate: venue.coordinate) {
-                        VenueAnnotation(venue: venue)
-                            .onTapGesture {
-                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                                    selectedVenue = venue
-                                    showVenueDetail = true
+                Map(bounds: MapCameraBounds(centerCoordinateBounds: locationManager.region)) {
+                    UserAnnotation()
+                    
+                    ForEach(venues) { venue in
+                        Annotation(venue.name, coordinate: venue.coordinate) {
+                            VenueAnnotation(venue: venue)
+                                .onTapGesture {
+                                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                        selectedVenue = venue
+                                        showVenueDetail = true
+                                    }
+                                    
+                                    // Premium haptic feedback
+                                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                                    impactFeedback.impactOccurred()
                                 }
-                                
-                                // Premium haptic feedback
-                                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                                impactFeedback.impactOccurred()
-                            }
+                        }
                     }
                 }
                 .mapStyle(.standard(emphasis: .muted))
@@ -145,20 +147,35 @@ struct MapView: View {
                             }
                     )
                 }
+                
+                // Header Gradient Fade
+                VStack {
+                    LinearGradient(
+                        colors: [.black, .black.opacity(0.4), .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 100)
+                    .allowsHitTesting(false)
+                    
+                    Spacer()
+                }
+                .ignoresSafeArea(edges: .top)
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden()
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .principal) {
                     HStack {
                         Text("RAVE")
-                            .font(.system(size: 28, weight: .black, design: .rounded))
-                            .neonText(color: .white, glowColor: .raveNeon)
+                            .font(.system(size: 36, weight: .medium, design: .rounded))
+                            .foregroundColor(.ravePurple)
                     }
                 }
             }
-            .toolbarBackground(.clear, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
         .onAppear {
             setupMockData()
@@ -216,7 +233,7 @@ struct LocationPermissionView: View {
             VStack(spacing: 12) {
                 Text("Location Access Needed")
                     .font(.system(size: 24, weight: .black, design: .rounded))
-                    .neonText(color: .white, glowColor: .raveNeon)
+                    .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                 
                 Text("Enable location access to discover the hottest venues and connect with the nightlife scene around you")

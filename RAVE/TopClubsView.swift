@@ -103,6 +103,20 @@ struct TopClubsView: View {
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
                 }
+                
+                // Header Gradient Fade
+                VStack {
+                    LinearGradient(
+                        colors: [.black, .black.opacity(0.4), .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 100)
+                    .allowsHitTesting(false)
+                    
+                    Spacer()
+                }
+                .ignoresSafeArea(edges: .top)
             }
         )
         }
@@ -152,8 +166,18 @@ struct SearchBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.cardBackground)
+                
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.regularMaterial.opacity(0.6))
+                
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(.white.opacity(0.2), lineWidth: 1)
+            }
+        )
         .padding(.horizontal)
     }
 }
@@ -168,8 +192,13 @@ struct VenueRowView: View {
             Text(venue.primaryEmoji)
                 .font(.system(size: 32))
                 .frame(width: 44, height: 44)
-                .background(Color.cardBackground)
-                .clipShape(Circle())
+                .background(
+                    ZStack {
+                        Circle().fill(Color.cardBackground)
+                        Circle().fill(.thinMaterial.opacity(0.4))
+                        Circle().stroke(.white.opacity(0.2), lineWidth: 1)
+                    }
+                )
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(venue.name)
@@ -213,8 +242,18 @@ struct VenueRowView: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 16)
-        .background(Color.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.cardBackground)
+                
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.regularMaterial.opacity(0.5))
+                
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(.white.opacity(0.2), lineWidth: 1)
+            }
+        )
         .padding(.horizontal)
         .padding(.vertical, 4)
     }
