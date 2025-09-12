@@ -13,65 +13,163 @@ struct MapView: View {
     @State private var venues: [Venue] = []
     @State private var selectedVenue: Venue?
     @State private var showVenueDetail = false
+    @State private var mapLoaded = false
+    @State private var showLocationButton = false
     
     var body: some View {
         NavigationStack {
             ZStack {
-                // MapKit Integration
+                // Premium Background Gradient
+                Color.deepBackground
+                    .ignoresSafeArea()
+                
+                // Ambient Particle Effects
+                ParticleView(count: 20, color: .ravePurple.opacity(0.2))
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                
+                // Enhanced MapKit Integration
                 Map(coordinateRegion: $locationManager.region, 
                     showsUserLocation: true,
                     annotationItems: venues) { venue in
                     MapAnnotation(coordinate: venue.coordinate) {
                         VenueAnnotation(venue: venue)
                             .onTapGesture {
-                                selectedVenue = venue
-                                showVenueDetail = true
+                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                    selectedVenue = venue
+                                    showVenueDetail = true
+                                }
+                                
+                                // Premium haptic feedback
+                                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                                impactFeedback.impactOccurred()
                             }
                     }
                 }
                 .mapStyle(.standard(emphasis: .muted))
                 .preferredColorScheme(.dark)
+                .clipShape(RoundedRectangle(cornerRadius: 0))
+                .opacity(mapLoaded ? 1.0 : 0.0)
+                .animation(.easeInOut(duration: 1.0), value: mapLoaded)
                 .ignoresSafeArea(edges: .bottom)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        mapLoaded = true
+                    }
+                }
                 
-                // Location Permission Overlay
+                // Premium Location Button
+                VStack {
+                    HStack {
+                        Spacer()
+                        
+                        if showLocationButton {
+                            Button(action: {
+                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                    locationManager.requestLocation()
+                                }
+                                
+                                let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                                impactFeedback.impactOccurred()
+                            }) {
+                                Image(systemName: "location.fill")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.ravePurple)
+                                    .frame(width: 48, height: 48)
+                                    .background(
+                                        ZStack {
+                                            Circle()
+                                                .fill(.ultraThinMaterial)
+                                            
+                                            Circle()
+                                                .fill(Color.ravePurple.opacity(0.1))
+                                            
+                                            Circle()
+                                                .stroke(
+                                                    LinearGradient(
+                                                        colors: [.white.opacity(0.4), .clear, Color.ravePurple.opacity(0.4)],
+                                                        startPoint: .topLeading,
+                                                        endPoint: .bottomTrailing
+                                                    ),
+                                                    lineWidth: 1
+                                                )
+                                        }
+                                    )
+                                    .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                                    .shadow(color: .ravePurple.opacity(0.3), radius: 15, x: 0, y: 8)
+                            }
+                            .scaleOnTap()
+                            .transition(.scale.combined(with: .opacity))
+                        }
+                    }
+                    .padding(.top, 20)
+                    .padding(.trailing, 20)
+                    
+                    Spacer()
+                }
+                
+                // Enhanced Location Permission Overlay
                 if !locationManager.isLocationEnabled {
                     VStack {
                         Spacer()
                         LocationPermissionView(locationManager: locationManager)
-                            .raveCard()
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
                             .padding()
                     }
                 }
                 
-                // Bottom Sheet for Selected Venue
+                // Premium Bottom Sheet for Selected Venue
                 if let selectedVenue = selectedVenue {
                     VStack {
                         Spacer()
                         VenueCardView(venue: selectedVenue) {
-                            self.selectedVenue = nil
+                            withAnimation(.spring(response: 0.8, dampingFraction: 0.7)) {
+                                self.selectedVenue = nil
+                            }
                         }
-                        .raveCard()
-                        .padding()
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 34)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.95)),
+                            removal: .move(edge: .bottom).combined(with: .opacity)
+                        ))
                     }
+                    .background(
+                        // Subtle backdrop blur
+                        Color.black.opacity(0.1)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.8, dampingFraction: 0.7)) {
+                                    self.selectedVenue = nil
+                                }
+                            }
+                    )
                 }
             }
-            .navigationTitle("RAVE")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        locationManager.requestLocation()
-                    }) {
-                        Image(systemName: "location")
-                            .foregroundColor(.ravePurple)
+                ToolbarItem(placement: .navigationBarLeading) {
+                    HStack {
+                        Text("RAVE")
+                            .font(.system(size: 28, weight: .black, design: .rounded))
+                            .neonText(color: .white, glowColor: .raveNeon)
                     }
                 }
             }
+            .toolbarBackground(.clear, for: .navigationBar)
         }
         .onAppear {
             setupMockData()
             locationManager.requestLocationPermission()
+            
+            // Show location button after a delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation(.spring(response: 0.8, dampingFraction: 0.7)) {
+                    showLocationButton = true
+                }
+            }
         }
     }
     
@@ -82,30 +180,149 @@ struct MapView: View {
 
 struct LocationPermissionView: View {
     let locationManager: LocationManager
+    @State private var iconPulse = false
+    @State private var cardScale: CGFloat = 0.9
     
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "location.slash")
-                .font(.system(size: 48))
-                .foregroundColor(.ravePurple)
-            
-            VStack(spacing: 8) {
-                Text("Location Access Needed")
-                    .font(RAVEFont.headline)
-                    .foregroundColor(.primary)
+        VStack(spacing: 24) {
+            // Premium Location Icon with Glow
+            ZStack {
+                // Pulsing background
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [.ravePurple.opacity(0.4), .raveNeon.opacity(0.2), .clear],
+                            center: .center,
+                            startRadius: 5,
+                            endRadius: 40
+                        )
+                    )
+                    .frame(width: 80, height: 80)
+                    .scaleEffect(iconPulse ? 1.2 : 1.0)
+                    .opacity(iconPulse ? 0.6 : 0.9)
+                    .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: iconPulse)
                 
-                Text("Enable location access to discover venues near you")
-                    .font(RAVEFont.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
+                // Main icon
+                Image(systemName: "location.slash")
+                    .font(.system(size: 48, weight: .semibold))
+                    .foregroundColor(.ravePurple)
+                    .shadow(color: .ravePurple.opacity(0.8), radius: 8, x: 0, y: 0)
+                    .shadow(color: .raveNeon.opacity(0.4), radius: 12, x: 0, y: 0)
+                    .scaleEffect(iconPulse ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true), value: iconPulse)
             }
             
-            Button("Enable Location") {
-                locationManager.requestLocationPermission()
+            // Enhanced Text Content
+            VStack(spacing: 12) {
+                Text("Location Access Needed")
+                    .font(.system(size: 24, weight: .black, design: .rounded))
+                    .neonText(color: .white, glowColor: .raveNeon)
+                    .multilineTextAlignment(.center)
+                
+                Text("Enable location access to discover the hottest venues and connect with the nightlife scene around you")
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .glassText()
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(2)
             }
-            .ravePrimaryButton()
+            
+            // Premium Action Button
+            Button(action: {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                    locationManager.requestLocationPermission()
+                }
+                
+                let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
+                impactFeedback.impactOccurred()
+            }) {
+                HStack(spacing: 12) {
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .shadow(color: .white.opacity(0.8), radius: 2, x: 0, y: 0)
+                    
+                    Text("Enable Location")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 18)
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(
+                                LinearGradient(
+                                    colors: [.ravePurple, .ravePink.opacity(0.8)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                        
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(.white.opacity(0.15))
+                        
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [.white.opacity(0.6), .clear, .white.opacity(0.3)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    }
+                )
+                .foregroundColor(.white)
+                .shadow(color: .ravePurple.opacity(0.4), radius: 15, x: 0, y: 8)
+                .shadow(color: .ravePink.opacity(0.3), radius: 25, x: 0, y: 12)
+            }
+            .scaleOnTap()
         }
-        .padding()
+        .padding(32)
+        .background(
+            ZStack {
+                // Main glassmorphism background
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(.ultraThinMaterial)
+                
+                // Gradient overlay
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                .ravePurple.opacity(0.12),
+                                .raveNeon.opacity(0.08),
+                                .ravePink.opacity(0.1)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                
+                // Premium border
+                RoundedRectangle(cornerRadius: 32)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                .white.opacity(0.4),
+                                .ravePurple.opacity(0.3),
+                                .raveNeon.opacity(0.2),
+                                .clear
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.5
+                    )
+            }
+        )
+        .scaleEffect(cardScale)
+        .shadow(color: .black.opacity(0.3), radius: 30, x: 0, y: 15)
+        .shadow(color: .ravePurple.opacity(0.2), radius: 50, x: 0, y: 25)
+        .onAppear {
+            withAnimation(.spring(response: 1.0, dampingFraction: 0.7)) {
+                cardScale = 1.0
+                iconPulse = true
+            }
+        }
     }
 }
 

@@ -20,7 +20,19 @@ struct AlertsView: View {
                     subtitle: notificationsEnabled ? "We'll notify you when the nightlife heats up!" : "Enable notifications to get venue alerts",
                     systemImage: "bell"
                 )
-                .background(Color.darkBackground.ignoresSafeArea())
+                .background(
+            ZStack {
+                Color.deepBackground.ignoresSafeArea()
+                if PerformanceOptimizer.shouldShowParticles() {
+                    ParticleView(
+                        count: PerformanceOptimizer.particleCount(defaultCount: 20), 
+                        color: .ravePurple.opacity(0.2)
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                }
+            }
+        )
             } else {
                 List(alerts) { alert in
                     AlertRowView(alert: alert)
@@ -29,7 +41,19 @@ struct AlertsView: View {
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
-                .background(Color.darkBackground.ignoresSafeArea())
+                .background(
+            ZStack {
+                Color.deepBackground.ignoresSafeArea()
+                if PerformanceOptimizer.shouldShowParticles() {
+                    ParticleView(
+                        count: PerformanceOptimizer.particleCount(defaultCount: 20), 
+                        color: .ravePurple.opacity(0.2)
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                }
+            }
+        )
             }
         }
         .navigationTitle("Alerts")

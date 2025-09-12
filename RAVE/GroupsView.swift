@@ -19,7 +19,19 @@ struct GroupsView: View {
                     subtitle: "Join or create a group to start connecting with people at venues",
                     systemImage: "person.3"
                 )
-                .background(Color.darkBackground.ignoresSafeArea())
+                .background(
+            ZStack {
+                Color.deepBackground.ignoresSafeArea()
+                if PerformanceOptimizer.shouldShowParticles() {
+                    ParticleView(
+                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
+                        color: .ravePurple.opacity(0.2)
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                }
+            }
+        )
             } else {
                 List(partyGroups) { group in
                     NavigationLink(destination: GroupDetailView(group: group)) {
@@ -30,7 +42,19 @@ struct GroupsView: View {
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
-                .background(Color.darkBackground.ignoresSafeArea())
+                .background(
+            ZStack {
+                Color.deepBackground.ignoresSafeArea()
+                if PerformanceOptimizer.shouldShowParticles() {
+                    ParticleView(
+                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
+                        color: .ravePurple.opacity(0.2)
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                }
+            }
+        )
             }
         }
         .navigationTitle("Groups")
@@ -109,7 +133,7 @@ struct PartyGroupRowView: View {
                             )
                             .overlay(
                                 Circle()
-                                    .stroke(Color.darkBackground, lineWidth: 2)
+                                    .stroke(Color.deepBackground.opacity(0.6), lineWidth: 2)
                             )
                             .zIndex(Double(3 - index))
                     }
@@ -226,7 +250,19 @@ struct CreateGroupView: View {
                     .foregroundColor(.secondary)
                 }
             }
-            .background(Color.darkBackground.ignoresSafeArea())
+            .background(
+            ZStack {
+                Color.deepBackground.ignoresSafeArea()
+                if PerformanceOptimizer.shouldShowParticles() {
+                    ParticleView(
+                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
+                        color: .ravePurple.opacity(0.2)
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                }
+            }
+        )
         }
         .preferredColorScheme(.dark)
     }
@@ -335,7 +371,19 @@ struct GroupDetailView: View {
         }
         .navigationTitle("Group Details")
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color.darkBackground.ignoresSafeArea())
+        .background(
+            ZStack {
+                Color.deepBackground.ignoresSafeArea()
+                if PerformanceOptimizer.shouldShowParticles() {
+                    ParticleView(
+                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
+                        color: .ravePurple.opacity(0.2)
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                }
+            }
+        )
     }
 }
 

@@ -92,7 +92,19 @@ struct TopClubsView: View {
             }
             .navigationTitle("Top Clubs")
             .navigationBarTitleDisplayMode(.large)
-            .background(Color.darkBackground.ignoresSafeArea())
+            .background(
+            ZStack {
+                Color.deepBackground.ignoresSafeArea()
+                if PerformanceOptimizer.shouldShowParticles() {
+                    ParticleView(
+                        count: PerformanceOptimizer.particleCount(defaultCount: 18), 
+                        color: .ravePurple.opacity(0.2)
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                }
+            }
+        )
         }
         .onAppear {
             setupMockData()
