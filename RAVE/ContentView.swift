@@ -16,7 +16,7 @@ struct ContentView: View {
             if showSplash {
                 SplashScreen()
                     .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                             withAnimation(.spring(response: 0.8, dampingFraction: 0.8)) {
                                 showSplash = false
                             }
@@ -138,7 +138,7 @@ struct FloatingTabBar: View {
                 )
         )
         .shadow(color: .ravePurple.opacity(0.2), radius: 20, x: 0, y: 10)
-        .padding(.horizontal, 32)
+        .padding(.horizontal, 10)
         .padding(.bottom, 34)
     }
 }

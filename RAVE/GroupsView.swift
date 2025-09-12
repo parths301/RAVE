@@ -168,7 +168,7 @@ struct PartyGroupRowView: View {
         .padding()
         .background(Color.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .padding(.horizontal)
+        .padding(.horizontal, 10)
         .padding(.vertical, 4)
     }
 }
@@ -239,7 +239,8 @@ struct CreateGroupView: View {
                 .ravePrimaryButton()
                 .disabled(groupName.isEmpty || selectedVenue == nil)
             }
-            .padding()
+            .padding(.horizontal, 10)
+            .padding(.vertical)
             .navigationTitle("New Group")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

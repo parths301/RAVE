@@ -237,7 +237,7 @@ struct AlertRowView: View {
         .padding()
         .background(alert.isRead ? Color.cardBackground.opacity(0.6) : Color.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .padding(.horizontal)
+        .padding(.horizontal, 10)
         .padding(.vertical, 4)
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.2)) {

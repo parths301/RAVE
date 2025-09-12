@@ -487,7 +487,7 @@ struct VenueDetailView: View {
                         label: "Price"
                     )
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 10)
                 
                 // Map Section
                 Map(coordinateRegion: .constant(
@@ -500,7 +500,7 @@ struct VenueDetailView: View {
                 }
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal)
+                .padding(.horizontal, 10)
                 
                 // Action Section
                 VStack(spacing: 12) {
@@ -521,7 +521,7 @@ struct VenueDetailView: View {
                         .raveSecondaryButton()
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 10)
             }
             .padding(.vertical)
         }

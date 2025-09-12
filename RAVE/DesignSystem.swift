@@ -10,19 +10,15 @@ import SwiftUI
 // MARK: - Premium Color System
 extension Color {
     // RAVE Neon Brand Palette
-    static let ravePurple = Color(hex: "A16EFF")
+    static let ravePurple = Color(hex: "7759F0")
     static let raveNeon = Color(hex: "00FFFF")
     static let ravePink = Color(hex: "FF1493")
     static let raveGold = Color(hex: "FFD700")
     
-    // Glassmorphism Background System
-    static let glassBackground = Color.black.opacity(0.05)
-    static let cardBackground = Color.black.opacity(0.3)
-    static let deepBackground = LinearGradient(
-        colors: [Color(hex: "0A0A0A"), Color(hex: "1A0A2E"), Color(hex: "16213E")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    // New RAVE Background System
+    static let glassBackground = Color(hex: "131417").opacity(0.05)
+    static let cardBackground = Color(hex: "1D1E21")
+    static let deepBackground = Color(hex: "131417")
     
     // Contextual Glass Colors
     static let nightGlass = Color.black.opacity(0.2)
@@ -786,12 +782,8 @@ struct OptimizedGradient {
         )
     }
     
-    static func deepBackground() -> LinearGradient {
-        LinearGradient(
-            colors: [Color(hex: "0A0A0A"), Color(hex: "1A0A2E"), Color(hex: "16213E")],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+    static func deepBackground() -> Color {
+        Color(hex: "131417")
     }
 }
 
