@@ -9,6 +9,14 @@ import SwiftUI
 import MapKit
 
 struct MapView: View {
+    var body: some View {
+        NavigationStack {
+            MapViewContent()
+        }
+    }
+}
+
+struct MapViewContent: View {
     @StateObject private var locationManager = LocationManager()
     @State private var venues: [Venue] = []
     @State private var selectedVenue: Venue?
@@ -17,7 +25,6 @@ struct MapView: View {
     @State private var showLocationButton = false
     
     var body: some View {
-        NavigationStack {
             ZStack {
                 // Premium Background Gradient
                 Color.deepBackground
@@ -148,14 +155,14 @@ struct MapView: View {
                     )
                 }
                 
-                // Header Gradient Fade
+                // Extended Translucent Header
                 VStack {
                     LinearGradient(
-                        colors: [.black, .black.opacity(0.4), .clear],
+                        colors: [.black.opacity(0.8), .black.opacity(0.4), .black.opacity(0.1), .clear],
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(height: 100)
+                    .frame(height: 150)
                     .allowsHitTesting(false)
                     
                     Spacer()
@@ -169,14 +176,13 @@ struct MapView: View {
                 ToolbarItem(placement: .principal) {
                     HStack {
                         Text("RAVE")
-                            .font(.system(size: 36, weight: .medium, design: .rounded))
+                            .font(.system(size: 46, weight: .medium, design: .rounded))
                             .foregroundColor(.ravePurple)
                     }
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
-        }
         .onAppear {
             setupMockData()
             locationManager.requestLocationPermission()

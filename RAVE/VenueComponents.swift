@@ -458,7 +458,7 @@ struct VenueDetailView: View {
                     )
                 )) {
                     Marker(venue.name, coordinate: venue.coordinate)
-                        .tint(.ravePurple)
+                        .tint(Color.ravePurple)
                 }
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 12))

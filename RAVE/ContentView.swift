@@ -61,40 +61,43 @@ struct PremiumTabView: View {
     @Namespace private var tabAnimation
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // Background with Particles
-            ZStack {
-                Color.deepBackground
-                    .ignoresSafeArea()
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                // Background with Particles
+                ZStack {
+                    Color.deepBackground
+                        .ignoresSafeArea()
+                    
+                    if PerformanceOptimizer.shouldShowParticles() {
+                        ParticleView(
+                            count: PerformanceOptimizer.particleCount(defaultCount: 30), 
+                            color: .ravePurple.opacity(0.3)
+                        )
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+                    }
+                }
                 
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 30), 
-                        color: .ravePurple.opacity(0.3)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
+                // Main Content
+                Group {
+                    switch selectedTab {
+                    case .map:
+                        MapViewContent()
+                    case .topClubs:
+                        TopClubsViewContent()
+                    case .crew:
+                        GroupsViewContent()
+                    case .alerts:
+                        AlertsView()
+                    }
                 }
+                .animation(.easeInOut(duration: 0.3), value: selectedTab)
+                
+                // Native Tab Bar
+                NativeTabBar(selectedTab: $selectedTab, namespace: tabAnimation)
             }
-            
-            // Main Content
-            Group {
-                switch selectedTab {
-                case .map:
-                    MapView()
-                case .topClubs:
-                    TopClubsView()
-                case .crew:
-                    GroupsView()
-                case .alerts:
-                    AlertsView()
-                }
-            }
-            .animation(.easeInOut(duration: 0.3), value: selectedTab)
-            
-            // Native Tab Bar
-            NativeTabBar(selectedTab: $selectedTab, namespace: tabAnimation)
         }
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 

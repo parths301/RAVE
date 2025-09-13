@@ -8,6 +8,14 @@
 import SwiftUI
 
 struct TopClubsView: View {
+    var body: some View {
+        NavigationStack {
+            TopClubsViewContent()
+        }
+    }
+}
+
+struct TopClubsViewContent: View {
     @State private var searchText = ""
     @State private var selectedFilters: Set<VenueFilter> = [.all]
     @State private var venues: [Venue] = []
@@ -50,76 +58,74 @@ struct TopClubsView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Search Bar
-                SearchBar(text: $searchText)
-                
-                // Filter Chips
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(VenueFilter.allCases, id: \.self) { filter in
-                            FilterChip(
-                                filter: filter,
-                                isSelected: selectedFilters.contains(filter)
-                            ) {
-                                toggleFilter(filter)
-                            }
+        VStack(spacing: 0) {
+            // Search Bar
+            SearchBar(text: $searchText)
+            
+            // Filter Chips
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 12) {
+                    ForEach(VenueFilter.allCases, id: \.self) { filter in
+                        FilterChip(
+                            filter: filter,
+                            isSelected: selectedFilters.contains(filter)
+                        ) {
+                            toggleFilter(filter)
                         }
                     }
-                    .padding(.horizontal)
                 }
-                .padding(.vertical, 8)
-                
-                // Results List
-                if filteredVenues.isEmpty {
-                    RAVEEmptyStateView(
-                        title: "No venues found",
-                        subtitle: searchText.isEmpty ? "Try adjusting your filters" : "Try a different search term",
-                        systemImage: "magnifyingglass"
-                    )
-                } else {
-                    List(filteredVenues) { venue in
-                        NavigationLink(destination: VenueDetailView(venue: venue)) {
-                            VenueRowView(venue: venue, locationManager: locationManager)
-                        }
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+                .padding(.horizontal)
+            }
+            .padding(.vertical, 8)
+            
+            // Results List
+            if filteredVenues.isEmpty {
+                RAVEEmptyStateView(
+                    title: "No venues found",
+                    subtitle: searchText.isEmpty ? "Try adjusting your filters" : "Try a different search term",
+                    systemImage: "magnifyingglass"
+                )
+            } else {
+                List(filteredVenues) { venue in
+                    NavigationLink(destination: VenueDetailView(venue: venue)) {
+                        VenueRowView(venue: venue, locationManager: locationManager)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Top Clubs")
-            .navigationBarTitleDisplayMode(.large)
-            .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 18), 
-                        color: .ravePurple.opacity(0.2)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-                
-                // Header Gradient Fade
-                VStack {
-                    LinearGradient(
-                        colors: [.black, .black.opacity(0.4), .clear],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 100)
-                    .allowsHitTesting(false)
-                    
-                    Spacer()
-                }
-                .ignoresSafeArea(edges: .top)
-            }
-        )
         }
+        .navigationTitle("Top Clubs")
+        .navigationBarTitleDisplayMode(.large)
+        .background(
+        ZStack {
+            Color.deepBackground.ignoresSafeArea()
+            if PerformanceOptimizer.shouldShowParticles() {
+                ParticleView(
+                    count: PerformanceOptimizer.particleCount(defaultCount: 18), 
+                    color: .ravePurple.opacity(0.2)
+                )
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+            }
+            
+            // Header Gradient Fade
+            VStack {
+                LinearGradient(
+                    colors: [.black, .black.opacity(0.4), .clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 100)
+                .allowsHitTesting(false)
+                
+                Spacer()
+            }
+            .ignoresSafeArea(edges: .top)
+        }
+    )
         .onAppear {
             setupMockData()
         }

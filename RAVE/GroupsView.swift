@@ -8,6 +8,14 @@
 import SwiftUI
 
 struct GroupsView: View {
+    var body: some View {
+        NavigationStack {
+            GroupsViewContent()
+        }
+    }
+}
+
+struct GroupsViewContent: View {
     @State private var partyGroups: [PartyGroup] = []
     @State private var showCreateCrew = false
     
@@ -27,40 +35,22 @@ struct GroupsView: View {
             }
             
             // Content Layer
-            NavigationStack {
-                if partyGroups.isEmpty {
-                    RAVEEmptyStateView(
-                        title: "No Party Crews",
-                        subtitle: "Join or create a crew to start connecting with people at venues",
-                        systemImage: "person.3"
-                    )
-                } else {
-                    List(partyGroups) { group in
-                        NavigationLink(destination: CrewDetailView(group: group)) {
-                            PartyGroupRowView(group: group)
-                        }
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+            if partyGroups.isEmpty {
+                RAVEEmptyStateView(
+                    title: "No Party Crews",
+                    subtitle: "Join or create a crew to start connecting with people at venues",
+                    systemImage: "person.3"
+                )
+            } else {
+                List(partyGroups) { group in
+                    NavigationLink(destination: CrewDetailView(group: group)) {
+                        PartyGroupRowView(group: group)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                 }
-            }
-            .navigationTitle("Crew")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showCreateCrew = true }) {
-                        Image(systemName: "plus")
-                            .foregroundColor(.ravePurple)
-                    }
-                }
-            }
-            .sheet(isPresented: $showCreateCrew) {
-                CreateCrewView()
-            }
-            .onAppear {
-                setupMockData()
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
             
             // Header Gradient Fade
@@ -76,6 +66,22 @@ struct GroupsView: View {
                 Spacer()
             }
             .ignoresSafeArea(edges: .top)
+        }
+        .navigationTitle("Crew")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: { showCreateCrew = true }) {
+                    Image(systemName: "plus")
+                        .foregroundColor(.ravePurple)
+                }
+            }
+        }
+        .sheet(isPresented: $showCreateCrew) {
+            CreateCrewView()
+        }
+        .onAppear {
+            setupMockData()
         }
     }
     
