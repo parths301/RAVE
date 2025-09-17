@@ -116,6 +116,10 @@ enum VenueCategory: String, CaseIterable, Codable {
             return "fork.knife"
         }
     }
+
+    var systemImage: String {
+        return icon
+    }
 }
 
 enum PriceRange: String, CaseIterable, Codable {
@@ -145,7 +149,7 @@ struct User: Identifiable, Codable {
     }
 }
 
-struct PartyGroup: Identifiable, Codable {
+struct PartyCrew: Identifiable {
     let id: UUID
     let name: String
     let members: [User]
@@ -153,7 +157,7 @@ struct PartyGroup: Identifiable, Codable {
     let createdAt: Date
     let chatMessages: [ChatMessage]
     let isActive: Bool
-    
+
     init(id: UUID = UUID(), name: String, members: [User], venue: Venue, createdAt: Date = Date(), chatMessages: [ChatMessage] = [], isActive: Bool = true) {
         self.id = id
         self.name = name
@@ -165,30 +169,15 @@ struct PartyGroup: Identifiable, Codable {
     }
 }
 
-struct ChatMessage: Identifiable, Codable {
+struct ChatMessage: Identifiable {
     let id: UUID
-    let content: String
-    let sender: User
+    let text: String
+    let sender: String
     let timestamp: Date
-    let messageType: MessageType
-    
-    enum MessageType: String, Codable {
-        case text
-        case emoji
-        case location
-        case photo
-    }
-    
-    init(id: UUID = UUID(), content: String, sender: User, timestamp: Date = Date(), messageType: MessageType = .text) {
-        self.id = id
-        self.content = content
-        self.sender = sender
-        self.timestamp = timestamp
-        self.messageType = messageType
-    }
+    let isFromCurrentUser: Bool
 }
 
-enum VenueFilter: String, CaseIterable {
+enum TopClubFilter: String, CaseIterable {
     case all = "All"
     case nearby = "Nearby"
     case popular = "Popular"
@@ -206,18 +195,32 @@ enum VenueFilter: String, CaseIterable {
             return "clock"
         }
     }
+
+    var displayName: String {
+        switch self {
+        case .all: return "All"
+        case .nearby: return "Nearby"
+        case .popular: return "Popular"
+        case .openNow: return "Open Now"
+        }
+    }
 }
 
-struct VenueUpdate {
-    let venueId: UUID
+struct TopClubUpdate {
+    let clubId: UUID
     let checkInCount: Int
     let vibeStatus: String
     let timestamp: Date
-    
-    init(venueId: UUID, checkInCount: Int, vibeStatus: String, timestamp: Date = Date()) {
-        self.venueId = venueId
+
+    init(clubId: UUID, checkInCount: Int, vibeStatus: String, timestamp: Date = Date()) {
+        self.clubId = clubId
         self.checkInCount = checkInCount
         self.vibeStatus = vibeStatus
         self.timestamp = timestamp
     }
 }
+
+// MARK: - Type Aliases for Compatibility
+typealias VenueFilter = TopClubFilter
+typealias VenueUpdate = TopClubUpdate
+typealias PartyGroup = PartyCrew

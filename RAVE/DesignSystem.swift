@@ -1,661 +1,285 @@
 //
 //  DesignSystem.swift
-//  RAVE - Premium Nightlife Social Experience
+//  Venues - Social Venue Discovery
 //
 //  Created by Claude on 12/09/25.
 //
 
 import SwiftUI
 
-// MARK: - Premium Color System
+// MARK: - Dark Mode Color Extensions
 extension Color {
-    // RAVE Neon Brand Palette
-    static let ravePurple = Color(hex: "7759F0")
-    static let raveNeon = Color(hex: "00FFFF")
-    static let ravePink = Color(hex: "FF1493")
-    static let raveGold = Color(hex: "FFD700")
-    
-    // New RAVE Background System
-    static let glassBackground = Color(hex: "131417").opacity(0.05)
-    static let cardBackground = Color(hex: "1D1E21")
-    static let deepBackground = Color(hex: "131417")
-    
-    // Contextual Glass Colors
-    static let nightGlass = Color.black.opacity(0.2)
-    static let clubGlass = Color.purple.opacity(0.15)
-    static let partyGlass = Color.pink.opacity(0.1)
-    static let vipGlass = Color.yellow.opacity(0.08)
-    
-    // Semantic Colors with Transparency
-    static let successGlass = Color.green.opacity(0.3)
-    static let warningGlass = Color.orange.opacity(0.3)
-    static let errorGlass = Color.red.opacity(0.3)
-    static let infoGlass = Color.blue.opacity(0.3)
-    
-    // Initialize from hex string
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (1, 1, 1, 0)
-        }
-        
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
-        )
-    }
-    
-    // Gradient Builders
-    static func neonGradient(_ colors: [Color] = [.ravePurple, .raveNeon, .ravePink]) -> LinearGradient {
-        LinearGradient(
-            colors: colors,
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-    
-    static func vibeGradient(for vibe: VenueVibe) -> LinearGradient {
-        switch vibe {
-        case .electric:
-            return neonGradient([.raveNeon, .ravePurple])
-        case .fire:
-            return neonGradient([.ravePink, .raveGold])
-        case .chill:
-            return neonGradient([.ravePurple, .blue])
-        case .wild:
-            return neonGradient([.ravePink, .red, .raveGold])
-        }
-    }
+    // RAVE Dark Theme Colors
+    static let appAccent = Color(red: 0.63, green: 0.43, blue: 1.0) // Purple accent
+    static let appPrimary = Color(red: 0.63, green: 0.43, blue: 1.0) // Purple primary
+    static let appSecondary = Color(UIColor.secondaryLabel)
+    static let appTertiary = Color(UIColor.tertiaryLabel)
+
+    // Dark Mode Background Colors
+    static let appBackground = Color(UIColor.black) // Pure black background
+    static let appSecondaryBackground = Color(UIColor.systemGray6) // Dark cards
+    static let appTertiaryBackground = Color(UIColor.systemGray5) // Lighter cards
+    static let appGroupedBackground = Color(UIColor.black) // Pure black grouped
+
+    // Apple Semantic Colors
+    static let appRed = Color.red
+    static let appGreen = Color.green
+    static let appBlue = Color.blue
+    static let appOrange = Color.orange
+    static let appYellow = Color.yellow
+    static let appPink = Color.pink
+    static let appPurple = Color.purple
+    static let appIndigo = Color.indigo
+    static let appTeal = Color.teal
+    static let appCyan = Color.cyan
+    static let appMint = Color.mint
+
+    // Apple Fill Colors
+    static let appFill = Color(UIColor.systemFill)
+    static let appSecondaryFill = Color(UIColor.secondarySystemFill)
+    static let appTertiaryFill = Color(UIColor.tertiarySystemFill)
+    static let appQuaternaryFill = Color(UIColor.quaternarySystemFill)
+
+    // Apple Gray Palette
+    static let appGray = Color(UIColor.systemGray)
+    static let appGray2 = Color(UIColor.systemGray2)
+    static let appGray3 = Color(UIColor.systemGray3)
+    static let appGray4 = Color(UIColor.systemGray4)
+    static let appGray5 = Color(UIColor.systemGray5)
+    static let appGray6 = Color(UIColor.systemGray6)
+
+    // Dark Mode Separator Colors
+    static let appSeparator = Color(UIColor.systemGray4)
+    static let appOpaqueSeparator = Color(UIColor.systemGray3)
+
+    // RAVE Dark Theme Specific Colors
+    static let nightBackground = Color(red: 0.05, green: 0.05, blue: 0.1) // Deep dark blue
+    static let cardDark = Color(red: 0.1, green: 0.1, blue: 0.15) // Dark card background
+    static let neonPurple = Color(red: 0.63, green: 0.43, blue: 1.0) // Neon purple accent
+    static let dimWhite = Color(red: 0.9, green: 0.9, blue: 0.95) // Slightly dimmed white
 }
 
-enum VenueVibe {
-    case electric, fire, chill, wild
-}
+// MARK: - Apple Typography System
+struct AppleFont {
+    // Apple Standard Typography - San Francisco
+    static let largeTitle = Font.largeTitle // 34pt
+    static let title = Font.title // 28pt
+    static let title2 = Font.title2 // 22pt
+    static let title3 = Font.title3 // 20pt
+    static let headline = Font.headline // 17pt semibold
+    static let body = Font.body // 17pt
+    static let callout = Font.callout // 16pt
+    static let subheadline = Font.subheadline // 15pt
+    static let footnote = Font.footnote // 13pt
+    static let caption = Font.caption // 12pt
+    static let caption2 = Font.caption2 // 11pt
 
-// MARK: - Premium Typography System
-struct RAVEFont {
-    // Brand Typography - SF Pro Rounded for Modern Feel
-    static let hero = Font.system(size: 48, weight: .black, design: .rounded)
-    static let largeTitle = Font.system(size: 34, weight: .bold, design: .rounded)
-    static let title = Font.system(size: 28, weight: .bold, design: .rounded)
-    static let title2 = Font.system(size: 22, weight: .semibold, design: .rounded)
-    static let headline = Font.system(size: 17, weight: .semibold, design: .rounded)
-    static let body = Font.system(size: 17, weight: .regular, design: .default)
-    static let callout = Font.system(size: 16, weight: .medium, design: .default)
-    static let subheadline = Font.system(size: 15, weight: .regular, design: .default)
-    static let footnote = Font.system(size: 13, weight: .regular, design: .default)
-    static let caption = Font.system(size: 12, weight: .medium, design: .default)
-    static let tiny = Font.system(size: 10, weight: .medium, design: .default)
-}
-
-// MARK: - Glassmorphism Material System
-enum GlassMaterial {
-    case ultra, thin, thick, custom(opacity: Double)
-    
-    var material: Material {
-        switch self {
-        case .ultra:
-            return .ultraThinMaterial
-        case .thin:
-            return .thinMaterial  
-        case .thick:
-            return .thickMaterial
-        case .custom(_):
-            return .ultraThinMaterial // Base material for custom
-        }
+    // Dynamic Type Support
+    static func customFont(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design = .default) -> Font {
+        return Font.system(size: size, weight: weight, design: design)
     }
-    
-    var opacity: Double {
-        switch self {
-        case .ultra:
-            return 0.05
-        case .thin:
-            return 0.1
-        case .thick:
-            return 0.2
-        case .custom(let opacity):
-            return opacity
-        }
-    }
+
+    // RAVE Brand Typography
+    static let raveTitle = Font.system(size: 28, weight: .thin, design: .default).width(.condensed)
+    static let raveTitleLarge = Font.system(size: 34, weight: .thin, design: .default).width(.condensed)
+    static let raveTitleBold = Font.system(size: 36, weight: .bold, design: .default).width(.condensed)
+    static let raveTitleHero = Font.system(size: 42, weight: .bold, design: .default).width(.condensed)
 }
 
-// MARK: - Premium Button System
-struct RAVEButtonStyle: ButtonStyle {
+
+// MARK: - Apple Standard Button Styles
+struct AppleButtonStyle: ButtonStyle {
     let variant: Variant
-    
+
     enum Variant {
-        case neon, glass, floating, pill
+        case primary, secondary, tertiary, plain
     }
-    
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding(.vertical, variant == .pill ? 8 : 16)
-            .padding(.horizontal, variant == .pill ? 12 : 24)
-            .font(RAVEFont.callout)
-            .background(backgroundView)
+            .font(AppleFont.body)
+            .fontWeight(.medium)
             .foregroundColor(foregroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: variant == .pill ? 20 : 16))
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical, verticalPadding)
+            .background(backgroundView)
+            .cornerRadius(cornerRadius)
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .brightness(configuration.isPressed ? 0.1 : 0)
-            .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
-            .shadow(color: shadowColor, radius: 8, x: 0, y: 4)
+            .opacity(configuration.isPressed ? 0.8 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
     }
-    
+
     @ViewBuilder
     private var backgroundView: some View {
         switch variant {
-        case .neon:
-            Color.neonGradient()
-        case .glass:
-            Color.nightGlass
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-        case .floating:
-            Color.clubGlass
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
-        case .pill:
-            Color.ravePurple.opacity(0.3)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+        case .primary:
+            Color.appPrimary
+        case .secondary:
+            Color.appSecondaryBackground
+        case .tertiary:
+            Color.appTertiaryBackground
+        case .plain:
+            Color.clear
         }
     }
-    
+
     private var foregroundColor: Color {
         switch variant {
-        case .neon:
+        case .primary:
             return .white
-        case .glass, .floating:
-            return .white.opacity(0.9)
-        case .pill:
-            return .white.opacity(0.8)
+        case .secondary, .tertiary:
+            return .appPrimary
+        case .plain:
+            return .appPrimary
         }
     }
-    
-    private var shadowColor: Color {
+
+    private var horizontalPadding: CGFloat {
         switch variant {
-        case .neon:
-            return .ravePurple.opacity(0.3)
-        case .glass, .floating:
-            return .black.opacity(0.2)
-        case .pill:
-            return .clear
+        case .primary, .secondary, .tertiary:
+            return 16
+        case .plain:
+            return 8
         }
+    }
+
+    private var verticalPadding: CGFloat {
+        switch variant {
+        case .primary, .secondary, .tertiary:
+            return 12
+        case .plain:
+            return 8
+        }
+    }
+
+    private var cornerRadius: CGFloat {
+        return 8
     }
 }
 
-// MARK: - Glassmorphism Components
-struct GlassCard: ViewModifier {
-    let material: GlassMaterial
-    let cornerRadius: CGFloat
-    
+// MARK: - Apple Standard List Components
+struct AppleListRow: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .background(
-                Rectangle()
-                    .fill(.clear)
-                    .background(material.material, in: RoundedRectangle(cornerRadius: cornerRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [.white.opacity(0.2), .clear, .white.opacity(0.1)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1
-                            )
-                    )
-            )
-            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.appBackground)
+            .listRowInsets(EdgeInsets())
     }
 }
 
-struct FloatingGlass: ViewModifier {
-    @State private var offset: CGFloat = 0
-    
+struct AppleCard: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24))
-            .overlay(
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.white.opacity(0.3), .clear, .white.opacity(0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
-                    )
-            )
-            .shadow(color: .ravePurple.opacity(0.1), radius: 20, x: 0, y: 10)
-            .offset(y: offset)
-            .onAppear {
-                withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                    offset = 2
-                }
-            }
-    }
-}
-
-// MARK: - Advanced Interaction System
-struct ElasticButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
-            .animation(.interactiveSpring(response: 0.4, dampingFraction: 0.6), value: configuration.isPressed)
-    }
-}
-
-struct HapticButtonStyle: ButtonStyle {
-    let intensity: UIImpactFeedbackGenerator.FeedbackStyle
-    
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .brightness(configuration.isPressed ? 0.1 : 0)
-            .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
-            .onChange(of: configuration.isPressed) { _, isPressed in
-                if isPressed {
-                    let impactFeedback = UIImpactFeedbackGenerator(style: intensity)
-                    impactFeedback.impactOccurred()
-                }
-            }
-    }
-}
-
-// MARK: - Particle System Components
-struct ParticleView: View {
-    @State private var particles: [Particle] = []
-    let count: Int
-    let color: Color
-    
-    var body: some View {
-        ZStack {
-            ForEach(particles, id: \.id) { particle in
-                Circle()
-                    .fill(color.opacity(particle.opacity))
-                    .frame(width: particle.size, height: particle.size)
-                    .position(x: particle.x, y: particle.y)
-                    .blur(radius: particle.blur)
-            }
-        }
-        .onAppear {
-            generateParticles()
-            startAnimation()
-        }
-    }
-    
-    private func generateParticles() {
-        particles = (0..<count).map { _ in
-            Particle(
-                x: Double.random(in: 0...UIScreen.main.bounds.width),
-                y: Double.random(in: 0...UIScreen.main.bounds.height),
-                size: Double.random(in: 2...8),
-                opacity: Double.random(in: 0.1...0.6),
-                blur: Double.random(in: 0...3)
-            )
-        }
-    }
-    
-    private func startAnimation() {
-        withAnimation(.linear(duration: Double.random(in: 10...20)).repeatForever(autoreverses: false)) {
-            for i in particles.indices {
-                particles[i].y -= Double.random(in: 100...300)
-                particles[i].opacity = 0
-            }
-        }
-    }
-}
-
-struct Particle {
-    let id = UUID()
-    var x: Double
-    var y: Double
-    let size: Double
-    var opacity: Double
-    let blur: Double
-}
-
-// MARK: - Premium Loading States
-struct PulsingLoader: View {
-    @State private var scale: CGFloat = 0.8
-    let color: Color
-    
-    var body: some View {
-        Circle()
-            .fill(color)
-            .frame(width: 60, height: 60)
-            .scaleEffect(scale)
-            .opacity(2 - scale)
-            .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: scale)
-            .onAppear {
-                scale = 1.2
-            }
-    }
-}
-
-struct ShimmerLoader: View {
-    @State private var shimmerOffset: CGFloat = -200
-    let width: CGFloat
-    let height: CGFloat
-    
-    var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(Color.gray.opacity(0.3))
-            .frame(width: width, height: height)
+            .padding(16)
+            .background(Color.appSecondaryBackground)
+            .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        LinearGradient(
-                            colors: [.clear, .white.opacity(0.4), .clear],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .offset(x: shimmerOffset)
-                    .animation(.linear(duration: 1.5).repeatForever(autoreverses: false), value: shimmerOffset)
+                    .stroke(Color.appSeparator, lineWidth: 0.5)
             )
-            .onAppear {
-                shimmerOffset = width + 200
-            }
     }
 }
 
-// MARK: - View Extensions for Premium Experience
-extension View {
-    // Glassmorphism Modifiers
-    func glassCard(material: GlassMaterial = .thin, cornerRadius: CGFloat = 16) -> some View {
-        self.modifier(GlassCard(material: material, cornerRadius: cornerRadius))
-    }
-    
-    func floatingGlass() -> some View {
-        self.modifier(FloatingGlass())
-    }
-    
-    func raveCard() -> some View {
-        self.padding(20)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.white.opacity(0.3), .clear, .ravePurple.opacity(0.3)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
-            .shadow(color: .black.opacity(0.2), radius: 15, x: 0, y: 8)
-            .shadow(color: .ravePurple.opacity(0.1), radius: 20, x: 0, y: 10)
-    }
-    
-    // Premium Button Styles
-    func neonButton() -> some View {
-        self.buttonStyle(RAVEButtonStyle(variant: .neon))
-    }
-    
-    func glassButton() -> some View {
-        self.buttonStyle(RAVEButtonStyle(variant: .glass))
-    }
-    
-    func floatingButton() -> some View {
-        self.buttonStyle(RAVEButtonStyle(variant: .floating))
-    }
-    
-    func pillButton() -> some View {
-        self.buttonStyle(RAVEButtonStyle(variant: .pill))
-    }
-    
-    func raveGhostButton() -> some View {
-        self
-            .font(.system(size: 14, weight: .semibold, design: .rounded))
-            .foregroundColor(.ravePurple)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(.clear)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.ravePurple.opacity(0.6), .raveNeon.opacity(0.4)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
-                    )
-            )
-            .scaleOnTap()
-    }
-    
-    func ravePrimaryButton() -> some View {
-        self
-            .font(.system(size: 16, weight: .bold, design: .rounded))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(
-                            LinearGradient(
-                                colors: [.ravePurple, .ravePink.opacity(0.8)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                    
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.white.opacity(0.1))
-                    
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(
-                            LinearGradient(
-                                colors: [.white.opacity(0.6), .clear, .white.opacity(0.3)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                }
-            )
-            .shadow(color: .ravePurple.opacity(0.4), radius: 12, x: 0, y: 6)
-            .shadow(color: .ravePink.opacity(0.3), radius: 20, x: 0, y: 10)
-            .scaleOnTap()
-    }
-    
-    func raveSecondaryButton() -> some View {
-        self
-            .font(.system(size: 16, weight: .semibold, design: .rounded))
-            .foregroundColor(.ravePurple)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                    
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.ravePurple.opacity(0.1))
-                    
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(
-                            LinearGradient(
-                                colors: [.white.opacity(0.4), .clear, Color.ravePurple.opacity(0.4)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                }
-            )
-            .shadow(color: .ravePurple.opacity(0.2), radius: 8, x: 0, y: 4)
-            .scaleOnTap()
-    }
-    
-    // Advanced Interactions
-    func elasticPress() -> some View {
-        self.buttonStyle(ElasticButtonStyle())
-    }
-    
-    func hapticPress(_ intensity: UIImpactFeedbackGenerator.FeedbackStyle = .medium) -> some View {
-        self.buttonStyle(HapticButtonStyle(intensity: intensity))
-    }
-    
-    func scaleOnTap() -> some View {
-        self.scaleEffect(1.0)
-            .onTapGesture {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                    // Animation handled by the spring animation
-                }
-            }
-    }
-    
-    // Visual Effects
-    func neonGlow(color: Color = .ravePurple, radius: CGFloat = 8) -> some View {
-        self.shadow(color: color.opacity(0.6), radius: radius, x: 0, y: 0)
-    }
-    
-    func breathingEffect(scale: CGFloat = 1.05, duration: Double = 2) -> some View {
-        self.scaleEffect(1.0)
-            .animation(.easeInOut(duration: duration).repeatForever(autoreverses: true), value: scale)
-    }
-    
-    // Gradient Backgrounds
-    func neonBackground() -> some View {
-        self.background(Color.neonGradient().ignoresSafeArea())
-    }
-    
-    func deepBackground() -> some View {
-        self.background(Color.deepBackground.ignoresSafeArea())
-    }
-    
-    // Text Effects
-    func neonText(color: Color = .ravePurple, glowColor: Color? = nil) -> some View {
-        let effectiveGlowColor = glowColor ?? color
-        return self.foregroundColor(color)
-            .shadow(color: effectiveGlowColor.opacity(0.8), radius: 2, x: 0, y: 0)
-            .shadow(color: effectiveGlowColor.opacity(0.4), radius: 8, x: 0, y: 0)
-    }
-    
-    func glassText() -> some View {
-        self.foregroundColor(.white.opacity(0.9))
-            .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
+// MARK: - Apple Navigation Components
+struct AppleNavigationStyle: ViewModifier {
+    let title: String
+
+    func body(content: Content) -> some View {
+        content
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.visible, for: .navigationBar)
     }
 }
 
-// MARK: - Legacy Component Updates
-struct FilterChip: View {
-    let filter: VenueFilter
-    let isSelected: Bool
-    let action: () -> Void
-    
+// MARK: - Apple Standard Components
+struct AppleToggle: View {
+    @Binding var isOn: Bool
+    let title: String
+    let subtitle: String?
+
+    init(_ title: String, subtitle: String? = nil, isOn: Binding<Bool>) {
+        self.title = title
+        self.subtitle = subtitle
+        self._isOn = isOn
+    }
+
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Image(systemName: filter.systemImage)
-                    .font(.caption)
-                Text(filter.rawValue)
-                    .font(RAVEFont.caption)
-                    .fontWeight(.medium)
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
-            .background(
-                Group {
-                    if isSelected {
-                        Color.neonGradient([.ravePurple, .raveNeon])
-                    } else {
-                        Color.nightGlass
-                            .background(.ultraThinMaterial, in: Capsule())
-                    }
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(AppleFont.body)
+                    .foregroundColor(.primary)
+
+                if let subtitle = subtitle {
+                    Text(subtitle)
+                        .font(AppleFont.footnote)
+                        .foregroundColor(.secondary)
                 }
-            )
-            .foregroundColor(isSelected ? .white : .white.opacity(0.7))
-            .clipShape(Capsule())
-            .overlay(
-                Capsule()
-                    .stroke(
-                        isSelected ? Color.clear : Color.white.opacity(0.2),
-                        lineWidth: 1
-                    )
-            )
+            }
+
+            Spacer()
+
+            Toggle("", isOn: $isOn)
+                .labelsHidden()
         }
-        .hapticPress(.light)
+        .padding(.vertical, 8)
     }
 }
 
-struct VibeBadge: View {
-    let status: String
-    
-    var body: some View {
-        Text(status)
-            .font(RAVEFont.tiny)
-            .fontWeight(.semibold)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
-            .background(
-                Color.ravePurple.opacity(0.3)
-                    .background(.ultraThinMaterial, in: Capsule())
-            )
-            .foregroundColor(.white)
-            .clipShape(Capsule())
-            .overlay(
-                Capsule()
-                    .stroke(Color.ravePurple.opacity(0.6), lineWidth: 1)
-            )
-            .neonGlow(color: .ravePurple, radius: 4)
-    }
-}
+struct AppleSegmentedPicker<SelectionValue: Hashable>: View {
+    @Binding var selection: SelectionValue
+    let options: [(SelectionValue, String)]
 
-// MARK: - Premium Empty and Loading States
-struct RAVELoadingView: View {
     var body: some View {
-        VStack(spacing: 24) {
-            PulsingLoader(color: .ravePurple)
-            
-            Text("Finding the vibe...")
-                .font(RAVEFont.callout)
-                .glassText()
+        Picker("Options", selection: $selection) {
+            ForEach(options, id: \.0) { option in
+                Text(option.1).tag(option.0)
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .deepBackground()
+        .pickerStyle(.segmented)
     }
 }
 
-struct RAVEEmptyStateView: View {
+// MARK: - Apple Standard Empty State
+struct AppleEmptyStateView: View {
     let title: String
     let subtitle: String
     let systemImage: String
-    
+    let action: (() -> Void)?
+    let actionTitle: String?
+
+    init(title: String, subtitle: String, systemImage: String, action: (() -> Void)? = nil, actionTitle: String? = nil) {
+        self.title = title
+        self.subtitle = subtitle
+        self.systemImage = systemImage
+        self.action = action
+        self.actionTitle = actionTitle
+    }
+
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 16) {
             Image(systemName: systemImage)
-                .font(.system(size: 64))
-                .foregroundColor(.ravePurple.opacity(0.6))
-                .neonGlow(color: .ravePurple, radius: 8)
-            
-            VStack(spacing: 12) {
+                .font(.system(size: 48))
+                .foregroundColor(.appSecondary)
+
+            VStack(spacing: 8) {
                 Text(title)
-                    .font(RAVEFont.title2)
-                    .glassText()
-                
+                    .font(AppleFont.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+
                 Text(subtitle)
-                    .font(RAVEFont.subheadline)
-                    .foregroundColor(.white.opacity(0.6))
+                    .font(AppleFont.body)
+                    .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if let action = action, let actionTitle = actionTitle {
+                Button(actionTitle, action: action)
+                    .buttonStyle(AppleButtonStyle(variant: .primary))
             }
         }
         .padding(.horizontal, 32)
@@ -663,244 +287,335 @@ struct RAVEEmptyStateView: View {
     }
 }
 
-// MARK: - Premium Preview
-#Preview("Premium Design System") {
-    ScrollView {
-        VStack(spacing: 32) {
-            // Typography Showcase
-            VStack(spacing: 16) {
-                Text("RAVE")
-                    .font(RAVEFont.hero)
-                    .foregroundColor(.ravePurple)
-                
-                Text("Premium Nightlife Experience")
-                    .font(RAVEFont.title2)
-                    .glassText()
-            }
-            
-            // Button Styles
-            VStack(spacing: 16) {
-                Button("Join the Party") {}
-                    .ravePrimaryButton()
-                
-                Button("Discover Venues") {}
-                    .glassButton()
-                
-                Button("Create Group") {}
-                    .floatingButton()
-                
-                HStack(spacing: 12) {
-                    Button("🔥 Fire") {}
-                        .pillButton()
-                    
-                    Button("⚡ Electric") {}
-                        .pillButton()
-                    
-                    Button("✨ Chill") {}
-                        .pillButton()
-                }
-            }
-            
-            // Glass Cards
-            VStack(spacing: 16) {
-                VStack {
-                    Text("Premium Venue")
-                        .font(RAVEFont.headline)
-                        .glassText()
-                    
-                    Text("Experience the ultimate nightlife")
-                        .font(RAVEFont.subheadline)
-                        .foregroundColor(.white.opacity(0.7))
-                }
-                .padding(24)
-                .glassCard(material: .thin)
-                
-                VStack {
-                    Text("VIP Experience")
-                        .font(RAVEFont.headline)
-                        .foregroundColor(.raveGold)
-                    
-                    HStack {
-                        PulsingLoader(color: .raveGold)
-                            .frame(width: 24, height: 24)
-                        
-                        Text("Exclusive Access")
-                            .font(RAVEFont.callout)
-                            .glassText()
-                    }
-                }
-                .padding(24)
-                .floatingGlass()
-            }
-            
-            // Filter Chips
-            HStack(spacing: 12) {
-                FilterChip(filter: .all, isSelected: true) {}
-                FilterChip(filter: .popular, isSelected: false) {}
-                FilterChip(filter: .nearby, isSelected: false) {}
-            }
-            
-            // Vibe Badges
-            HStack(spacing: 12) {
-                VibeBadge(status: "🔥 Fire")
-                VibeBadge(status: "⚡ Electric")  
-                VibeBadge(status: "✨ Magical")
-            }
-            
-            // Particle Effect Preview
-            ZStack {
-                ParticleView(count: 20, color: .ravePurple)
-                    .frame(height: 100)
-                
-                Text("Ambient Particles")
-                    .font(RAVEFont.callout)
-                    .glassText()
-            }
-            .glassCard()
+// MARK: - Apple Loading States
+struct AppleActivityIndicator: View {
+    var body: some View {
+        ProgressView()
+            .progressViewStyle(CircularProgressViewStyle(tint: .appPrimary))
+            .scaleEffect(1.2)
+    }
+}
+
+struct AppleLoadingView: View {
+    let message: String
+
+    init(message: String = "Loading...") {
+        self.message = message
+    }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            AppleActivityIndicator()
+
+            Text(message)
+                .font(AppleFont.body)
+                .foregroundColor(.secondary)
         }
-        .padding(24)
-    }
-    .deepBackground()
-    .preferredColorScheme(.dark)
-}
-
-// MARK: - Performance Optimized Components
-struct OptimizedGradient {
-    static func neonGradient() -> LinearGradient {
-        LinearGradient(
-            colors: [.ravePurple, .raveNeon.opacity(0.8), .ravePink.opacity(0.6)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-    
-    static func glassGradient() -> LinearGradient {
-        LinearGradient(
-            colors: [.white.opacity(0.2), .clear, .white.opacity(0.1)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-    
-    static func deepBackground() -> Color {
-        Color(hex: "131417")
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.appBackground)
     }
 }
 
-// MARK: - Accessibility Helpers
-struct AccessibilityModifiers {
-    static func enhanceForVoiceOver<T: View>(_ view: T, label: String, hint: String? = nil) -> some View {
-        view
+// MARK: - Apple Tab Bar Components
+struct AppleTabView<Content: View>: View {
+    @Binding var selection: Int
+    let content: Content
+
+    init(selection: Binding<Int>, @ViewBuilder content: () -> Content) {
+        self._selection = selection
+        self.content = content()
+    }
+
+    var body: some View {
+        TabView(selection: $selection) {
+            content
+        }
+        .accentColor(.appPrimary)
+    }
+}
+
+// MARK: - Apple Form Components
+struct AppleFormSection<Content: View>: View {
+    let title: String?
+    let footer: String?
+    let content: Content
+
+    init(title: String? = nil, footer: String? = nil, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.footer = footer
+        self.content = content()
+    }
+
+    var body: some View {
+        Section {
+            content
+        } header: {
+            if let title = title {
+                Text(title)
+                    .font(AppleFont.footnote)
+                    .foregroundColor(.secondary)
+                    .textCase(nil)
+            }
+        } footer: {
+            if let footer = footer {
+                Text(footer)
+                    .font(AppleFont.footnote)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+struct AppleTextField: View {
+    let title: String
+    @Binding var text: String
+    let placeholder: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(AppleFont.footnote)
+                .foregroundColor(.secondary)
+
+            TextField(placeholder, text: $text)
+                .textFieldStyle(.roundedBorder)
+                .frame(minHeight: 44)
+        }
+    }
+}
+
+// MARK: - Apple Alert Components
+struct AppleAlertModifier: ViewModifier {
+    @Binding var isPresented: Bool
+    let title: String
+    let message: String?
+    let primaryAction: () -> Void
+    let secondaryAction: (() -> Void)?
+    let primaryTitle: String
+    let secondaryTitle: String?
+
+    func body(content: Content) -> some View {
+        content
+            .alert(title, isPresented: $isPresented) {
+                Button(primaryTitle, action: primaryAction)
+
+                if let secondaryAction = secondaryAction, let secondaryTitle = secondaryTitle {
+                    Button(secondaryTitle, role: .cancel, action: secondaryAction)
+                }
+            } message: {
+                if let message = message {
+                    Text(message)
+                }
+            }
+    }
+}
+
+// MARK: - View Extensions for Apple Standards
+extension View {
+    // Apple Standard Modifiers
+    func appleCard() -> some View {
+        self.modifier(AppleCard())
+    }
+
+    func appleListRow() -> some View {
+        self.modifier(AppleListRow())
+    }
+
+    func appleNavigation(title: String) -> some View {
+        self.modifier(AppleNavigationStyle(title: title))
+    }
+
+    // Apple Button Styles
+    func applePrimaryButton() -> some View {
+        self.buttonStyle(AppleButtonStyle(variant: .primary))
+    }
+
+    func appleSecondaryButton() -> some View {
+        self.buttonStyle(AppleButtonStyle(variant: .secondary))
+    }
+
+    func appleTertiaryButton() -> some View {
+        self.buttonStyle(AppleButtonStyle(variant: .tertiary))
+    }
+
+    func applePlainButton() -> some View {
+        self.buttonStyle(AppleButtonStyle(variant: .plain))
+    }
+
+    // Apple Alert
+    func appleAlert(
+        isPresented: Binding<Bool>,
+        title: String,
+        message: String? = nil,
+        primaryAction: @escaping () -> Void,
+        primaryTitle: String = "OK",
+        secondaryAction: (() -> Void)? = nil,
+        secondaryTitle: String? = nil
+    ) -> some View {
+        self.modifier(AppleAlertModifier(
+            isPresented: isPresented,
+            title: title,
+            message: message,
+            primaryAction: primaryAction,
+            secondaryAction: secondaryAction,
+            primaryTitle: primaryTitle,
+            secondaryTitle: secondaryTitle
+        ))
+    }
+
+    // Apple Accessibility
+    func appleAccessibility(label: String, hint: String? = nil, traits: AccessibilityTraits = []) -> some View {
+        self
             .accessibilityLabel(label)
             .accessibilityHint(hint ?? "")
-            .accessibilityAddTraits(.allowsDirectInteraction)
+            .accessibilityAddTraits(traits)
     }
-    
+
+    // Apple Hit Testing
+    func appleMinimumTapTarget() -> some View {
+        self.frame(minWidth: 44, minHeight: 44)
+    }
+}
+
+// MARK: - Apple Filter Components
+struct AppleFilterChip: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(AppleFont.footnote)
+                .fontWeight(.medium)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(isSelected ? Color.appPrimary : Color.appSecondaryBackground)
+                .foregroundColor(isSelected ? .white : .primary)
+                .cornerRadius(16)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.appSeparator, lineWidth: isSelected ? 0 : 0.5)
+                )
+        }
+        .appleAccessibility(
+            label: title,
+            hint: isSelected ? "Selected filter" : "Tap to select filter",
+            traits: .isButton
+        )
+    }
+}
+
+// MARK: - Apple Standard Layout
+struct AppleListStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(Color.appGroupedBackground)
+    }
+}
+
+extension View {
+    func appleListStyle() -> some View {
+        self.modifier(AppleListStyle())
+    }
+}
+
+// MARK: - Apple Spacing Standards (8pt Grid)
+struct AppleSpacing {
+    static let xs: CGFloat = 4      // 0.5 * 8pt
+    static let small: CGFloat = 8   // 1 * 8pt
+    static let medium: CGFloat = 16 // 2 * 8pt
+    static let large: CGFloat = 24  // 3 * 8pt
+    static let xl: CGFloat = 32     // 4 * 8pt
+    static let xxl: CGFloat = 40    // 5 * 8pt
+
+    // Apple Standard Padding
+    static let standardPadding: CGFloat = 16
+    static let modalPadding: CGFloat = 20
+    static let minimumSpacing: CGFloat = 8
+}
+
+// MARK: - Apple Accessibility Helpers
+struct AppleAccessibility {
     static func enhanceButton<T: View>(_ view: T, label: String, hint: String = "Double tap to activate") -> some View {
         view
             .accessibilityLabel(label)
             .accessibilityHint(hint)
             .accessibilityAddTraits(.isButton)
+            .frame(minWidth: 44, minHeight: 44)
     }
-    
-    static func enhanceNavigation<T: View>(_ view: T, label: String) -> some View {
+
+    static func enhanceNavigationItem<T: View>(_ view: T, label: String) -> some View {
         view
             .accessibilityLabel(label)
             .accessibilityAddTraits(.isHeader)
     }
-    
-    static func enhanceCard<T: View>(_ view: T, label: String, hint: String? = nil) -> some View {
+
+    static func enhanceListItem<T: View>(_ view: T, label: String, hint: String? = nil) -> some View {
         view
             .accessibilityElement(children: .contain)
             .accessibilityLabel(label)
-            .accessibilityHint(hint ?? "Swipe to explore content")
+            .accessibilityHint(hint ?? "")
     }
 }
 
-// MARK: - Performance Monitoring & Optimization
-struct PerformanceOptimizer {
-    static func reduceMotionIfNeeded() -> Bool {
+// MARK: - Performance and Accessibility Optimization
+struct ApplePerformance {
+    static func reduceMotionCheck() -> Bool {
         UIAccessibility.isReduceMotionEnabled
     }
-    
-    static func prefersCrossFadeTransitions() -> Bool {
-        UIAccessibility.prefersCrossFadeTransitions
-    }
-    
-    static func isVoiceOverRunning() -> Bool {
+
+    static func voiceOverCheck() -> Bool {
         UIAccessibility.isVoiceOverRunning
     }
-    
-    static func optimizedAnimation<T: Equatable>(duration: Double = 0.3, value: T) -> Animation {
+
+    static func standardAnimation<T: Equatable>(value: T) -> Animation? {
         if UIAccessibility.isReduceMotionEnabled {
-            return .linear(duration: 0.1)
+            return nil
         } else {
-            return .easeInOut(duration: duration)
+            return .easeInOut(duration: 0.3)
         }
     }
-    
-    static func optimizedSpringAnimation<T: Equatable>(value: T) -> Animation {
-        if UIAccessibility.isReduceMotionEnabled {
-            return .linear(duration: 0.2)
-        } else {
-            return .interactiveSpring(response: 0.6, dampingFraction: 0.8)
-        }
-    }
-    
-    static func shouldShowParticles() -> Bool {
-        !UIAccessibility.isReduceMotionEnabled && !ProcessInfo.processInfo.isLowPowerModeEnabled
-    }
-    
-    static func particleCount(defaultCount: Int) -> Int {
-        if ProcessInfo.processInfo.isLowPowerModeEnabled {
-            return max(1, defaultCount / 4)
-        } else if UIAccessibility.isReduceMotionEnabled {
-            return max(1, defaultCount / 2)
-        }
-        return defaultCount
+
+    static func contrastCheck() -> Bool {
+        UIAccessibility.isDarkerSystemColorsEnabled
     }
 }
 
-// MARK: - Enhanced View Extensions with Accessibility
-extension View {
-    func accessibleVenueCard(venueName: String, location: String, checkInCount: Int) -> some View {
-        self
-            .accessibilityElement(children: .contain)
-            .accessibilityLabel("Venue card for \(venueName)")
-            .accessibilityHint("Located at \(location) with \(checkInCount) people checked in. Double tap to view details.")
-            .accessibilityAddTraits(.isButton)
-    }
-    
-    func accessibleTabItem(tabName: String, isSelected: Bool) -> some View {
-        self
-            .accessibilityLabel(tabName)
-            .accessibilityHint(isSelected ? "Currently selected tab" : "Double tap to switch to \(tabName) tab")
-            .accessibilityAddTraits(.isButton)
-            .accessibilityAddTraits(isSelected ? .isSelected : [])
-    }
-    
-    func accessibleMapAnnotation(venueName: String) -> some View {
-        self
-            .accessibilityLabel("Map pin for \(venueName)")
-            .accessibilityHint("Double tap to view venue details")
-            .accessibilityAddTraits(.isButton)
-    }
-    
-    func optimizedAnimation<T: Equatable>(_ animation: Animation, value: T) -> some View {
-        if UIAccessibility.isReduceMotionEnabled {
-            return self.animation(.linear(duration: 0.1), value: value)
-        } else {
-            return self.animation(animation, value: value)
-        }
-    }
-    
-    func performanceOptimizedShadow(color: Color, radius: CGFloat, x: CGFloat = 0, y: CGFloat = 0) -> some View {
-        Group {
-            if ProcessInfo.processInfo.isLowPowerModeEnabled {
-                self.shadow(color: color.opacity(0.3), radius: radius * 0.5, x: x * 0.5, y: y * 0.5)
-            } else {
-                self.shadow(color: color, radius: radius, x: x, y: y)
+// MARK: - Apple Standard Preview
+#Preview("Apple Design System") {
+    NavigationView {
+        List {
+            AppleFormSection(title: "Buttons") {
+                VStack(spacing: AppleSpacing.medium) {
+                    Button("Primary Action") {}
+                        .applePrimaryButton()
+
+                    Button("Secondary Action") {}
+                        .appleSecondaryButton()
+
+                    Button("Tertiary Action") {}
+                        .appleTertiaryButton()
+                }
+                .padding(.vertical, AppleSpacing.small)
+            }
+
+            AppleFormSection(title: "Toggles") {
+                AppleToggle("Notifications", subtitle: "Receive updates about venues", isOn: .constant(true))
+                AppleToggle("Location Services", isOn: .constant(false))
+            }
+
+            AppleFormSection(title: "Filter Chips") {
+                HStack {
+                    AppleFilterChip(title: "All", isSelected: true) {}
+                    AppleFilterChip(title: "Nearby", isSelected: false) {}
+                    AppleFilterChip(title: "Popular", isSelected: false) {}
+                }
             }
         }
+        .appleListStyle()
+        .appleNavigation(title: "Venues")
     }
 }

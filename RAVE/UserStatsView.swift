@@ -10,27 +10,46 @@ import SwiftUI
 struct UserStatsView: View {
     @State private var selectedPeriod = StatsPeriod.thisMonth
     @State private var stats: UserStats = UserStats.mock()
-    
+    @State private var showingSettings = false
+
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                // Period Selector
-                Picker("Stats Period", selection: $selectedPeriod) {
-                    Text("This Week").tag(StatsPeriod.thisWeek)
-                    Text("This Month").tag(StatsPeriod.thisMonth)
-                    Text("This Year").tag(StatsPeriod.thisYear)
-                    Text("All Time").tag(StatsPeriod.allTime)
+            VStack(spacing: 20) {
+                // Modern Period Selector with improved styling
+                VStack(spacing: 16) {
+                    HStack {
+                        Text("Your Activity")
+                            .font(.title2.weight(.semibold))
+                            .foregroundStyle(.primary)
+
+                        Spacer()
+
+                        Button(action: { showingSettings = true }) {
+                            Image(systemName: "gearshape.fill")
+                                .font(.title3)
+                                .foregroundStyle(.secondary)
+                                .symbolRenderingMode(.hierarchical)
+                        }
+                        .accessibilityLabel("Settings")
+                    }
+                    .padding(.horizontal)
+
+                    Picker("Stats Period", selection: $selectedPeriod) {
+                        ForEach(StatsPeriod.allCases, id: \.self) { period in
+                            Text(period.rawValue).tag(period)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
                 }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
                 
-                // Main Stats Cards
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
+                // Modern Stats Cards with iOS 17+ styling
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
                     StatsCardView(
                         title: "Venues Visited",
                         value: "\(stats.venuesVisited)",
                         icon: "location.fill",
-                        iconColor: .ravePurple,
+                        iconColor: .appPrimary,
                         trend: stats.venuesTrend
                     )
                     
@@ -60,120 +79,109 @@ struct UserStatsView: View {
                 }
                 .padding(.horizontal)
                 
-                // Top Venues Section
+                // Modern Top Venues Section
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         Text("Top Venues")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.white)
-                        
+                            .font(.title3.weight(.semibold))
+                            .foregroundStyle(.primary)
+
                         Spacer()
-                        
+
                         Button("View All") {
                             // Show all venues
                         }
-                        .foregroundColor(.ravePurple)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.blue)
                     }
-                    
-                    VStack(spacing: 12) {
+
+                    VStack(spacing: 8) {
                         ForEach(Array(stats.topVenues.enumerated()), id: \.offset) { index, venue in
                             TopVenueRowView(venue: venue, rank: index + 1)
                         }
                     }
                 }
-                .padding()
+                .padding(20)
                 .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.cardBackground)
-                        
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.regularMaterial.opacity(0.5))
-                        
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(.white.opacity(0.2), lineWidth: 1)
-                    }
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(.regularMaterial)
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(.quaternary, lineWidth: 0.5)
                 )
                 .padding(.horizontal)
                 
-                // Activity Timeline
+                // Modern Activity Timeline
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Recent Activity")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-                    
-                    VStack(spacing: 16) {
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.primary)
+
+                    VStack(spacing: 12) {
                         ForEach(stats.recentActivities) { activity in
                             ActivityTimelineView(activity: activity)
                         }
                     }
                 }
-                .padding()
+                .padding(20)
                 .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.cardBackground)
-                        
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.regularMaterial.opacity(0.5))
-                        
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(.white.opacity(0.2), lineWidth: 1)
-                    }
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(.regularMaterial)
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(.quaternary, lineWidth: 0.5)
                 )
                 .padding(.horizontal)
                 
-                // Achievement Section
+                // Modern Achievement Section
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Achievements")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-                    
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.primary)
+
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
                         ForEach(stats.achievements) { achievement in
                             AchievementBadgeView(achievement: achievement)
                         }
                     }
                 }
-                .padding()
+                .padding(20)
                 .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.cardBackground)
-                        
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.regularMaterial.opacity(0.5))
-                        
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(.white.opacity(0.2), lineWidth: 1)
-                    }
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(.regularMaterial)
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(.quaternary, lineWidth: 0.5)
                 )
                 .padding(.horizontal)
                 
-                // Music Preferences Chart
+                // Modern Music Preferences Chart
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Music Preferences")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-                    
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.primary)
+
                     VStack(spacing: 12) {
                         ForEach(stats.musicPreferences) { preference in
                             MusicPreferenceBarView(preference: preference)
                         }
                     }
                 }
-                .padding()
+                .padding(20)
                 .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.cardBackground)
-                        
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.regularMaterial.opacity(0.5))
-                        
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(.white.opacity(0.2), lineWidth: 1)
-                    }
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(.regularMaterial)
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(.quaternary, lineWidth: 0.5)
                 )
                 .padding(.horizontal)
             }
@@ -181,21 +189,12 @@ struct UserStatsView: View {
         }
         .navigationTitle("Statistics")
         .navigationBarTitleDisplayMode(.large)
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
-                        color: .ravePurple.opacity(0.2)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+        .preferredColorScheme(.dark)
+        .sheet(isPresented: $showingSettings) {
+            StatsSettingsView()
+        }
         .onChange(of: selectedPeriod) {
-            // Update stats based on period
             updateStats()
         }
     }
@@ -214,71 +213,75 @@ struct StatsCardView: View {
     let icon: String
     let iconColor: Color
     let trend: StatsTrend
-    
+
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             HStack {
                 Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(iconColor)
-                
+                    .font(.title2)
+                    .foregroundStyle(iconColor.gradient)
+                    .symbolRenderingMode(.hierarchical)
+
                 Spacer()
-                
+
                 TrendIndicatorView(trend: trend)
             }
-            
-            VStack(alignment: .leading, spacing: 4) {
+
+            VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(value)
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
-                    
+                        .font(.largeTitle.weight(.bold))
+                        .foregroundStyle(.primary)
+                        .contentTransition(.numericText())
+
                     Spacer()
                 }
-                
+
                 HStack {
                     Text(title)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
                     Spacer()
                 }
             }
         }
-        .padding()
+        .padding(20)
         .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.cardBackground)
-                
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.regularMaterial.opacity(0.5))
-                
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.white.opacity(0.2), lineWidth: 1)
-            }
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(.regularMaterial)
+                .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(.quaternary, lineWidth: 0.5)
         )
     }
 }
 
 struct TrendIndicatorView: View {
     let trend: StatsTrend
-    
+
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: trend.icon)
                 .font(.caption)
-                .foregroundColor(trend.color)
-            
+                .foregroundStyle(trend.color)
+                .symbolRenderingMode(.hierarchical)
+
             Text(trend.text)
-                .font(.caption2)
-                .foregroundColor(trend.color)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(trend.color)
         }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 2)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
         .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(trend.color.opacity(0.2))
+            Capsule()
+                .fill(trend.color.opacity(0.15))
+        )
+        .overlay(
+            Capsule()
+                .stroke(trend.color.opacity(0.3), lineWidth: 0.5)
         )
     }
 }
@@ -286,48 +289,50 @@ struct TrendIndicatorView: View {
 struct TopVenueRowView: View {
     let venue: TopVenue
     let rank: Int
-    
+
     var body: some View {
-        HStack(spacing: 12) {
-            // Rank Badge
+        HStack(spacing: 16) {
+            // Modern Rank Badge
             ZStack {
                 Circle()
-                    .fill(rankColor)
-                    .frame(width: 32, height: 32)
-                
+                    .fill(rankColor.gradient)
+                    .frame(width: 36, height: 36)
+                    .shadow(color: rankColor.opacity(0.3), radius: 2, x: 0, y: 1)
+
                 Text("\(rank)")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.white)
             }
-            
+
             // Venue Info
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(venue.name)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
-                
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(.primary)
+
                 Text("\(venue.visits) visits")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
-            
+
             Spacer()
-            
-            // Visit Progress Bar
-            VStack(alignment: .trailing, spacing: 4) {
+
+            // Modern Progress Indicator
+            VStack(alignment: .trailing, spacing: 6) {
                 Text("\(Int(venue.percentage))%")
-                    .font(.caption)
-                    .foregroundColor(.ravePurple)
-                
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.blue)
+
                 ProgressView(value: venue.percentage / 100)
-                    .progressViewStyle(LinearProgressViewStyle(tint: .ravePurple))
+                    .progressViewStyle(LinearProgressViewStyle(tint: .blue))
                     .frame(width: 60)
+                    .scaleEffect(y: 1.2)
             }
         }
-        .padding()
+        .padding(16)
         .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.regularMaterial.opacity(0.3))
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.quaternary.opacity(0.5))
         )
     }
     
@@ -336,103 +341,105 @@ struct TopVenueRowView: View {
         case 1: return .yellow
         case 2: return .gray
         case 3: return .orange
-        default: return .ravePurple
+        default: return .appPrimary
         }
     }
 }
 
 struct ActivityTimelineView: View {
     let activity: ActivityItem
-    
+
     var body: some View {
-        HStack(spacing: 12) {
-            // Activity Icon
+        HStack(spacing: 16) {
+            // Modern Activity Icon
             Circle()
-                .fill(activity.type.color.opacity(0.2))
-                .frame(width: 40, height: 40)
+                .fill(activity.type.color.opacity(0.15))
+                .frame(width: 44, height: 44)
                 .overlay(
                     Image(systemName: activity.type.icon)
-                        .font(.system(size: 16))
-                        .foregroundColor(activity.type.color)
+                        .font(.title3)
+                        .foregroundStyle(activity.type.color.gradient)
+                        .symbolRenderingMode(.hierarchical)
                 )
-            
+
             // Activity Details
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(activity.title)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
-                
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(.primary)
+
                 Text(activity.subtitle)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
                 Text(activity.timeAgo)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.tertiary)
             }
-            
+
             Spacer()
         }
+        .padding(.vertical, 4)
     }
 }
 
 struct AchievementBadgeView: View {
     let achievement: Achievement
-    
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [achievement.color.opacity(0.3), achievement.color.opacity(0.1)],
-                            center: .center,
-                            startRadius: 10,
-                            endRadius: 30
-                        )
+                    .fill(achievement.color.gradient.opacity(0.2))
+                    .frame(width: 64, height: 64)
+                    .overlay(
+                        Circle()
+                            .stroke(achievement.color.opacity(0.3), lineWidth: 1)
                     )
-                    .frame(width: 60, height: 60)
-                
+
                 Image(systemName: achievement.icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(achievement.color)
+                    .font(.title2)
+                    .foregroundStyle(achievement.color.gradient)
+                    .symbolRenderingMode(.hierarchical)
             }
-            
+
             Text(achievement.title)
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundColor(.white)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.primary)
                 .multilineTextAlignment(.center)
+                .lineLimit(2)
         }
-        .padding()
+        .padding(16)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.regularMaterial.opacity(0.3))
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.quaternary.opacity(0.5))
         )
     }
 }
 
 struct MusicPreferenceBarView: View {
     let preference: MusicPreference
-    
+
     var body: some View {
         VStack(spacing: 8) {
             HStack {
                 Text(preference.genre)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
-                
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(.primary)
+
                 Spacer()
-                
+
                 Text("\(Int(preference.percentage))%")
-                    .font(.caption)
-                    .foregroundColor(.ravePurple)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.blue)
             }
-            
+
             ProgressView(value: preference.percentage / 100)
-                .progressViewStyle(LinearProgressViewStyle(tint: .ravePurple))
-                .background(Color.gray.opacity(0.2))
+                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                .background(.quaternary, in: Capsule())
+                .scaleEffect(y: 1.5)
         }
+        .padding(.vertical, 4)
     }
 }
 
@@ -569,7 +576,7 @@ struct ActivityItem: Identifiable {
         
         var color: Color {
             switch self {
-            case .checkin: return .ravePurple
+            case .checkin: return .appPrimary
             case .event: return .blue
             case .achievement: return .yellow
             case .social: return .green
@@ -621,9 +628,61 @@ struct MusicPreference: Identifiable {
     }
 }
 
-#Preview {
+// MARK: - Stats Settings View
+
+struct StatsSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var showPersonalData = true
+    @State private var shareAnalytics = false
+    @State private var weeklyReports = true
+    @State private var pushNotifications = true
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Privacy") {
+                    Toggle("Show Personal Data", isOn: $showPersonalData)
+                    Toggle("Share Analytics", isOn: $shareAnalytics)
+                }
+
+                Section("Notifications") {
+                    Toggle("Weekly Reports", isOn: $weeklyReports)
+                    Toggle("Push Notifications", isOn: $pushNotifications)
+                }
+
+                Section("Data") {
+                    Button("Export Data") {
+                        // Export functionality
+                    }
+
+                    Button("Reset Statistics") {
+                        // Reset functionality
+                    }
+                    .foregroundStyle(.red)
+                }
+            }
+            .navigationTitle("Statistics Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+}
+
+#Preview("User Stats View") {
     NavigationStack {
         UserStatsView()
     }
     .preferredColorScheme(.dark)
+}
+
+#Preview("Stats Settings") {
+    StatsSettingsView()
+        .preferredColorScheme(.dark)
 }

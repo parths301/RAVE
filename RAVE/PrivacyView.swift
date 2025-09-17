@@ -55,7 +55,7 @@ struct PrivacyView: View {
                     title: "Allow Friend Requests",
                     subtitle: "Others can send you friend requests",
                     icon: "person.badge.plus.fill",
-                    iconColor: .ravePurple,
+                    iconColor: .appPrimary,
                     isOn: $allowFriendRequests
                 )
             }
@@ -127,7 +127,7 @@ struct PrivacyView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "doc.text.magnifyingglass")
                             .font(.system(size: 20))
-                            .foregroundColor(.ravePurple)
+                            .foregroundColor(.appPrimary)
                             .frame(width: 24)
                         
                         VStack(alignment: .leading, spacing: 2) {
@@ -195,19 +195,7 @@ struct PrivacyView: View {
         }
         .navigationTitle("Privacy")
         .navigationBarTitleDisplayMode(.large)
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 10), 
-                        color: .ravePurple.opacity(0.1)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color.appBackground)
     }
 }
 
@@ -244,7 +232,7 @@ struct PrivacyToggleRow: View {
             Spacer()
             
             Toggle("", isOn: $isOn)
-                .tint(.ravePurple)
+                .tint(.appPrimary)
         }
         .padding(.vertical, 4)
     }
@@ -284,23 +272,30 @@ struct BlockedUsersView: View {
                                 Image(systemName: "person.fill")
                                     .foregroundColor(.gray)
                             )
-                        
+
                         Text(user)
                             .font(.system(size: 16, weight: .medium))
-                        
+
                         Spacer()
-                        
+
                         Button("Unblock") {
-                            blockedUsers.removeAll { $0 == user }
+                            if let index = blockedUsers.firstIndex(of: user) {
+                                blockedUsers.remove(at: index)
+                            }
                         }
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                     }
                     .padding(.vertical, 4)
                 }
+                .onDelete(perform: deleteUser)
             }
         }
         .navigationTitle("Blocked Users")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func deleteUser(at offsets: IndexSet) {
+        blockedUsers.remove(atOffsets: offsets)
     }
 }
 
@@ -364,7 +359,7 @@ struct DataRowView: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 16))
-                .foregroundColor(.ravePurple)
+                .foregroundColor(.appPrimary)
                 .frame(width: 20)
             
             Text(title)
@@ -380,7 +375,7 @@ struct DataRowView: View {
     }
 }
 
-#Preview {
+#Preview("Privacy View") {
     NavigationStack {
         PrivacyView()
     }

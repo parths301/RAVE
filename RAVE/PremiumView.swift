@@ -53,7 +53,7 @@ struct PremiumView: View {
                         icon: "eye.fill",
                         title: "Advanced Venue Insights",
                         description: "See real-time crowd levels, music genres, and age demographics before you arrive",
-                        gradient: LinearGradient(colors: [.ravePurple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        gradient: LinearGradient(colors: [.appPrimary, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
                     )
                     
                     PremiumFeatureView(
@@ -88,7 +88,7 @@ struct PremiumView: View {
                         icon: "sparkles",
                         title: "Exclusive Content",
                         description: "Access premium events, early venue previews, and exclusive RAVE community features",
-                        gradient: LinearGradient(colors: [.indigo, .ravePurple], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        gradient: LinearGradient(colors: [.indigo, .appPrimary], startPoint: .topLeading, endPoint: .bottomTrailing)
                     )
                 }
                 
@@ -165,19 +165,19 @@ struct PremiumView: View {
                             // Show terms
                         }
                         .font(.caption)
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                         
                         Button("Privacy Policy") {
                             // Show privacy policy
                         }
                         .font(.caption)
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                         
                         Button("Restore Purchase") {
                             // Restore purchases
                         }
                         .font(.caption)
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                     }
                 }
                 .padding(.horizontal)
@@ -186,21 +186,7 @@ struct PremiumView: View {
         }
         .navigationTitle("Premium")
         .navigationBarTitleDisplayMode(.inline)
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                
-                // Premium particle effects
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 25), 
-                        color: .yellow.opacity(0.3)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color.appBackground.ignoresSafeArea())
         .sheet(isPresented: $showingPurchase) {
             PurchaseFlowView(selectedPlan: selectedPlan)
         }
@@ -244,7 +230,7 @@ struct PremiumFeatureView: View {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.cardBackground)
+                    .fill(Color.appSecondaryBackground)
                 
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.regularMaterial.opacity(0.5))
@@ -328,7 +314,7 @@ struct PremiumPlanCard: View {
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.cardBackground)
+                        .fill(Color.appSecondaryBackground)
                     
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.regularMaterial.opacity(0.5))
@@ -415,7 +401,7 @@ struct PurchaseFlowView: View {
                 }
             }
         }
-        .background(Color.deepBackground.ignoresSafeArea())
+        .background(Color.appBackground.ignoresSafeArea())
     }
 }
 
@@ -452,7 +438,7 @@ enum PremiumPlan: CaseIterable {
     }
 }
 
-#Preview {
+#Preview("Premium View") {
     NavigationStack {
         PremiumView()
     }
