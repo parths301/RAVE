@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Venues - Social Venue Discovery
+//  RAVE - Material Design 3 Navigation
 //
 //  Created by Parth Sharma on 12/09/25.
 //
@@ -8,54 +8,60 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedTab: VenueTab = .map
-
-    init() {
-        // Configure tab bar appearance per Apple HIG
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithOpaqueBackground()
-        tabBarAppearance.backgroundColor = UIColor.systemBackground
-
-        // Add subtle border for visual separation
-        tabBarAppearance.shadowColor = UIColor.separator
-
-        UITabBar.appearance().standardAppearance = tabBarAppearance
-        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
-    }
+    @State private var selectedTab: Int = 0
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            MapView()
-                .tabItem {
-                    Label(VenueTab.map.rawValue, systemImage: VenueTab.map.systemImage)
+        VStack(spacing: 0) {
+            // Main content area
+            Group {
+                switch selectedTab {
+                case 0: MapView()
+                case 1: TopClubsView()
+                case 2: CrewView()
+                case 3: CrewNotificationsView()
+                default: MapView()
                 }
-                .tag(VenueTab.map)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.materialSurface)
 
-            TopClubsView()
-                .tabItem {
-                    Label(VenueTab.topClubs.rawValue, systemImage: VenueTab.topClubs.systemImage)
-                }
-                .tag(VenueTab.topClubs)
-
-            CrewView()
-                .tabItem {
-                    Label(VenueTab.crew.rawValue, systemImage: VenueTab.crew.systemImage)
-                }
-                .tag(VenueTab.crew)
-
-            CrewNotificationsView()
-                .tabItem {
-                    Label(VenueTab.crewNotifications.rawValue, systemImage: VenueTab.crewNotifications.systemImage)
-                }
-                .tag(VenueTab.crewNotifications)
+            // Material Bottom Navigation
+            MaterialBottomNavigation(
+                selectedTab: $selectedTab,
+                tabs: materialTabs
+            )
         }
         .preferredColorScheme(.dark)
-        .tint(Color.neonPurple)
-        .background(Color.appBackground.ignoresSafeArea())
+        .background(Color.materialSurface.ignoresSafeArea())
+    }
+
+    private var materialTabs: [MaterialBottomNavigation.MaterialBottomNavTab] {
+        [
+            MaterialBottomNavigation.MaterialBottomNavTab(
+                icon: MaterialIcon.home,
+                activeIcon: "house.fill",
+                label: "Map"
+            ),
+            MaterialBottomNavigation.MaterialBottomNavTab(
+                icon: MaterialIcon.nightclub,
+                activeIcon: "wineglass.fill",
+                label: "Top Clubs"
+            ),
+            MaterialBottomNavigation.MaterialBottomNavTab(
+                icon: MaterialIcon.crew,
+                activeIcon: "person.3.fill",
+                label: "Crew"
+            ),
+            MaterialBottomNavigation.MaterialBottomNavTab(
+                icon: MaterialIcon.notification,
+                activeIcon: "bell.fill",
+                label: "Notifications"
+            )
+        ]
     }
 }
 
-// MARK: - RAVE Tab System
+// MARK: - Legacy Tab System (keeping for compatibility)
 enum VenueTab: String, CaseIterable {
     case map = "Map"
     case topClubs = "Top Clubs"
@@ -64,10 +70,10 @@ enum VenueTab: String, CaseIterable {
 
     var systemImage: String {
         switch self {
-        case .map: return "house"
-        case .topClubs: return "wineglass"
-        case .crew: return "person.3"
-        case .crewNotifications: return "bell"
+        case .map: return MaterialIcon.home
+        case .topClubs: return MaterialIcon.nightclub
+        case .crew: return MaterialIcon.crew
+        case .crewNotifications: return MaterialIcon.notification
         }
     }
 

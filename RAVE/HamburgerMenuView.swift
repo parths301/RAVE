@@ -1,14 +1,14 @@
 //
-//  HamburgerMenuView.swift
-//  RAVE
+//  MaterialNavigationDrawer.swift
+//  RAVE - Material Design 3 Navigation Drawer
 //
 //  Created by Claude on 12/09/25.
 //
 
 import SwiftUI
 
-struct HamburgerMenuView: View {
-    @Environment(\.dismiss) private var dismiss
+struct MaterialNavigationDrawerView: View {
+    @Binding var isOpen: Bool
     @State private var showingProfile = false
     @State private var showingSettings = false
     @State private var showingFriends = false
@@ -17,84 +17,105 @@ struct HamburgerMenuView: View {
     @State private var showingPrivacy = false
 
     var body: some View {
-        NavigationStack {
+        MaterialNavigationDrawer(isOpen: $isOpen) {
             VStack(spacing: 0) {
-                // Header with RAVE branding
-                VStack(spacing: 16) {
+                // Material Design Header
+                VStack(spacing: MaterialSpacing.lg) {
                     Text("RAVE")
-                        .font(AppleFont.raveTitleLarge)
-                        .foregroundStyle(Color.neonPurple.gradient)
+                        .font(MaterialFont.raveDisplayMedium)
+                        .foregroundColor(.materialPrimary)
                         .kerning(-2)
 
                     Text("Navigate Your Nightlife")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(MaterialFont.bodyMedium)
+                        .foregroundColor(.materialOnSurfaceVariant)
                 }
-                .padding(.top, 32)
-                .padding(.bottom, 40)
+                .padding(.top, MaterialSpacing.xxxxl)
+                .padding(.bottom, MaterialSpacing.xxxl)
+                .padding(.horizontal, MaterialSpacing.listItemPadding)
 
-                // Menu Items
+                // Material List Items
                 VStack(spacing: 0) {
-                    HamburgerMenuItem(
-                        icon: "person.circle",
+                    MaterialDrawerItem(
+                        icon: MaterialIcon.person,
                         title: "Profile",
-                        action: { showingProfile = true }
+                        action: {
+                            showingProfile = true
+                            withAnimation(MaterialMotion.mediumSlide) {
+                                isOpen = false
+                            }
+                        }
                     )
 
-                    HamburgerMenuItem(
-                        icon: "person.2",
+                    MaterialDrawerItem(
+                        icon: MaterialIcon.group,
                         title: "Friends",
-                        action: { showingFriends = true }
+                        action: {
+                            showingFriends = true
+                            withAnimation(MaterialMotion.mediumSlide) {
+                                isOpen = false
+                            }
+                        }
                     )
 
-                    HamburgerMenuItem(
+                    MaterialDrawerItem(
                         icon: "crown",
                         title: "Premium",
-                        action: { showingPremium = true }
+                        action: {
+                            showingPremium = true
+                            withAnimation(MaterialMotion.mediumSlide) {
+                                isOpen = false
+                            }
+                        }
                     )
 
-                    HamburgerMenuItem(
-                        icon: "gearshape",
+                    MaterialDrawerItem(
+                        icon: MaterialIcon.settings,
                         title: "Settings",
-                        action: { showingSettings = true }
+                        action: {
+                            showingSettings = true
+                            withAnimation(MaterialMotion.mediumSlide) {
+                                isOpen = false
+                            }
+                        }
                     )
 
-                    HamburgerMenuItem(
+                    MaterialDrawerItem(
                         icon: "questionmark.circle",
                         title: "Help",
-                        action: { showingHelp = true }
+                        action: {
+                            showingHelp = true
+                            withAnimation(MaterialMotion.mediumSlide) {
+                                isOpen = false
+                            }
+                        }
                     )
 
-                    HamburgerMenuItem(
+                    MaterialDrawerItem(
                         icon: "hand.raised",
                         title: "Privacy",
-                        action: { showingPrivacy = true }
+                        action: {
+                            showingPrivacy = true
+                            withAnimation(MaterialMotion.mediumSlide) {
+                                isOpen = false
+                            }
+                        }
                     )
                 }
 
                 Spacer()
 
-                // Footer
-                VStack(spacing: 8) {
+                // Material Footer
+                VStack(spacing: MaterialSpacing.sm) {
                     Text("RAVE v1.0")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .font(MaterialFont.labelMedium)
+                        .foregroundColor(.materialOnSurfaceVariant)
 
                     Text("Your Nightlife, Amplified")
-                        .font(.caption2)
-                        .foregroundStyle(.quaternary)
+                        .font(MaterialFont.labelSmall)
+                        .foregroundColor(.materialOutline)
                 }
-                .padding(.bottom, 40)
-            }
-            .background(Color.appBackground.ignoresSafeArea())
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                    .foregroundStyle(Color.neonPurple)
-                }
+                .padding(.bottom, MaterialSpacing.xxxxl)
             }
         }
         .preferredColorScheme(.dark)
@@ -119,45 +140,54 @@ struct HamburgerMenuView: View {
     }
 }
 
-struct HamburgerMenuItem: View {
+struct MaterialDrawerItem: View {
     let icon: String
     let title: String
     let action: () -> Void
+    @State private var isPressed = false
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 16) {
+        MaterialListItem(action: action) {
+            HStack(spacing: MaterialSpacing.lg) {
                 Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundStyle(Color.neonPurple.gradient)
+                    .font(MaterialFont.titleMedium)
+                    .foregroundColor(.materialPrimary)
                     .symbolRenderingMode(.hierarchical)
-                    .frame(width: 32)
+                    .frame(width: 24, height: 24)
 
                 Text(title)
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(.primary)
+                    .font(MaterialFont.bodyLarge)
+                    .foregroundColor(.materialOnSurface)
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .font(MaterialFont.labelMedium)
+                    .foregroundColor(.materialOnSurfaceVariant)
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 16)
-            .background(Color.clear)
         }
-        .buttonStyle(PlainButtonStyle())
-        .overlay(
-            Rectangle()
-                .fill(.quaternary.opacity(0.3))
-                .frame(height: 0.5),
-            alignment: .bottom
-        )
     }
 }
 
-#Preview("Hamburger Menu") {
-    HamburgerMenuView()
-        .preferredColorScheme(.dark)
+// Legacy HamburgerMenuView for backward compatibility
+typealias HamburgerMenuView = MaterialNavigationDrawerWrapper
+
+struct MaterialNavigationDrawerWrapper: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var isOpen = true
+
+    var body: some View {
+        MaterialNavigationDrawerView(isOpen: $isOpen)
+            .onReceive(NotificationCenter.default.publisher(for: .init("CloseDrawer"))) { _ in
+                dismiss()
+            }
+    }
+}
+
+#Preview("Material Navigation Drawer") {
+    ZStack {
+        Color.materialSurface.ignoresSafeArea()
+        MaterialNavigationDrawerView(isOpen: .constant(true))
+    }
+    .preferredColorScheme(.dark)
 }

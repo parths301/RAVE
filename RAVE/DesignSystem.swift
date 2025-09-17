@@ -1,56 +1,54 @@
 //
 //  DesignSystem.swift
-//  Venues - Social Venue Discovery
+//  RAVE - Material Design 3 Transition System
 //
 //  Created by Claude on 12/09/25.
 //
 
 import SwiftUI
 
-// MARK: - Dark Mode Color Extensions
+// MARK: - Material Design Compatibility Layer
+// This file provides compatibility between old Apple HIG components and new Material Design
+// It allows for gradual migration while maintaining existing functionality
+
 extension Color {
-    // RAVE Dark Theme Colors
-    static let appAccent = Color(red: 0.63, green: 0.43, blue: 1.0) // Purple accent
-    static let appPrimary = Color(red: 0.63, green: 0.43, blue: 1.0) // Purple primary
-    static let appSecondary = Color(UIColor.secondaryLabel)
-    static let appTertiary = Color(UIColor.tertiaryLabel)
+    // MARK: - Legacy to Material Color Mapping
+    // These map old Apple HIG colors to Material Design equivalents
 
-    // Dark Mode Background Colors
-    static let appBackground = Color(UIColor.black) // Pure black background
-    static let appSecondaryBackground = Color(UIColor.systemGray6) // Dark cards
-    static let appTertiaryBackground = Color(UIColor.systemGray5) // Lighter cards
-    static let appGroupedBackground = Color(UIColor.black) // Pure black grouped
+    // Primary Colors - Now Material Design
+    static let appAccent = Color.materialPrimary
+    static let appPrimary = Color.materialPrimary
+    static let appSecondary = Color.materialSecondary
+    static let appTertiary = Color.materialTertiary
 
-    // Apple Semantic Colors
-    static let appRed = Color.red
-    static let appGreen = Color.green
-    static let appBlue = Color.blue
-    static let appOrange = Color.orange
-    static let appYellow = Color.yellow
-    static let appPink = Color.pink
-    static let appPurple = Color.purple
-    static let appIndigo = Color.indigo
-    static let appTeal = Color.teal
-    static let appCyan = Color.cyan
-    static let appMint = Color.mint
+    // Background Colors - Now Material Design
+    static let appBackground = Color.materialSurface
+    static let appSecondaryBackground = Color.materialSurfaceContainer
+    static let appTertiaryBackground = Color.materialSurfaceContainerHigh
+    static let appGroupedBackground = Color.materialSurface
 
-    // Apple Fill Colors
-    static let appFill = Color(UIColor.systemFill)
-    static let appSecondaryFill = Color(UIColor.secondarySystemFill)
-    static let appTertiaryFill = Color(UIColor.tertiarySystemFill)
-    static let appQuaternaryFill = Color(UIColor.quaternarySystemFill)
+    // Semantic Colors - Material Design
+    static let appRed = Color.materialError
+    static let appGreen = Color(red: 0.0, green: 0.6, blue: 0.3) // Material Green
+    static let appBlue = Color.materialPrimary
+    static let appOrange = Color(red: 1.0, green: 0.6, blue: 0.0) // Material Orange
+    static let appYellow = Color(red: 1.0, green: 0.9, blue: 0.0) // Material Yellow
+    static let appPink = Color.materialTertiary
+    static let appPurple = Color.materialPrimary
+    static let appIndigo = Color.materialSecondary
+    static let appTeal = Color(red: 0.0, green: 0.7, blue: 0.6) // Material Teal
+    static let appCyan = Color(red: 0.0, green: 0.7, blue: 0.8) // Material Cyan
+    static let appMint = Color(red: 0.0, green: 0.8, blue: 0.7) // Material Mint
 
-    // Apple Gray Palette
-    static let appGray = Color(UIColor.systemGray)
-    static let appGray2 = Color(UIColor.systemGray2)
-    static let appGray3 = Color(UIColor.systemGray3)
-    static let appGray4 = Color(UIColor.systemGray4)
-    static let appGray5 = Color(UIColor.systemGray5)
-    static let appGray6 = Color(UIColor.systemGray6)
+    // Fill Colors - Material Design
+    static let appFill = Color.materialSurfaceContainer
+    static let appSecondaryFill = Color.materialSurfaceContainerHigh
+    static let appTertiaryFill = Color.materialSurfaceContainerHighest
+    static let appQuaternaryFill = Color.materialSurfaceVariant
 
-    // Dark Mode Separator Colors
-    static let appSeparator = Color(UIColor.systemGray4)
-    static let appOpaqueSeparator = Color(UIColor.systemGray3)
+    // Outline and Separator Colors - Material Design
+    static let appSeparator = Color.materialOutlineVariant
+    static let appOpaqueSeparator = Color.materialOutline
 
     // RAVE Dark Theme Specific Colors
     static let nightBackground = Color(red: 0.05, green: 0.05, blue: 0.1) // Deep dark blue
@@ -59,31 +57,31 @@ extension Color {
     static let dimWhite = Color(red: 0.9, green: 0.9, blue: 0.95) // Slightly dimmed white
 }
 
-// MARK: - Apple Typography System
+// MARK: - Material Typography System (Compatibility Layer)
 struct AppleFont {
-    // Apple Standard Typography - San Francisco
-    static let largeTitle = Font.largeTitle // 34pt
-    static let title = Font.title // 28pt
-    static let title2 = Font.title2 // 22pt
-    static let title3 = Font.title3 // 20pt
-    static let headline = Font.headline // 17pt semibold
-    static let body = Font.body // 17pt
-    static let callout = Font.callout // 16pt
-    static let subheadline = Font.subheadline // 15pt
-    static let footnote = Font.footnote // 13pt
-    static let caption = Font.caption // 12pt
-    static let caption2 = Font.caption2 // 11pt
+    // Material Design Typography mapped to legacy names
+    static let largeTitle = MaterialFont.displayMedium
+    static let title = MaterialFont.headlineMedium
+    static let title2 = MaterialFont.titleLarge
+    static let title3 = MaterialFont.titleMedium
+    static let headline = MaterialFont.titleMedium
+    static let body = MaterialFont.bodyLarge
+    static let callout = MaterialFont.bodyMedium
+    static let subheadline = MaterialFont.bodyMedium
+    static let footnote = MaterialFont.bodySmall
+    static let caption = MaterialFont.labelMedium
+    static let caption2 = MaterialFont.labelSmall
 
-    // Dynamic Type Support
+    // Dynamic Type Support (now using Material principles)
     static func customFont(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design = .default) -> Font {
         return Font.system(size: size, weight: weight, design: design)
     }
 
-    // RAVE Brand Typography
-    static let raveTitle = Font.system(size: 28, weight: .thin, design: .default).width(.condensed)
-    static let raveTitleLarge = Font.system(size: 34, weight: .thin, design: .default).width(.condensed)
-    static let raveTitleBold = Font.system(size: 36, weight: .bold, design: .default).width(.condensed)
-    static let raveTitleHero = Font.system(size: 42, weight: .bold, design: .default).width(.condensed)
+    // RAVE Brand Typography - Material Design Sizes
+    static let raveTitle = MaterialFont.raveHeadline
+    static let raveTitleLarge = MaterialFont.raveDisplayMedium
+    static let raveTitleBold = MaterialFont.raveDisplayMedium
+    static let raveTitleHero = MaterialFont.raveDisplayLarge
 }
 
 

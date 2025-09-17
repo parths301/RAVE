@@ -1,6 +1,6 @@
 //
 //  TopClubsView.swift
-//  Venues - Social Venue Discovery
+//  RAVE - Material Design 3 Top Clubs View
 //
 //  Created by Claude on 12/09/25.
 //
@@ -9,10 +9,25 @@ import SwiftUI
 
 struct TopClubsView: View {
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            // Material Top App Bar
+            MaterialTopAppBar(
+                title: "Top Clubs",
+                leadingAction: nil,
+                trailingActions: [
+                    MaterialTopAppBar.MaterialAppBarAction(
+                        icon: MaterialIcon.search,
+                        action: {
+                            // Search action will be handled by the search bar
+                        }
+                    )
+                ]
+            )
+
+            // Content
             TopClubsViewContent()
-                .appleNavigation(title: "Top Clubs")
         }
+        .background(Color.materialSurface)
     }
 }
 
@@ -58,35 +73,52 @@ struct TopClubsViewContent: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Apple Standard Filter Section
-            VStack(spacing: AppleSpacing.small) {
-                AppleSegmentedPicker(
-                    selection: $selectedFilter,
-                    options: VenueFilter.allCases.map { ($0, $0.displayName) }
-                )
-                .padding(.horizontal, AppleSpacing.standardPadding)
-            }
-            .padding(.vertical, AppleSpacing.small)
-            .background(Color.appSecondaryBackground)
-
-            // Results List
-            if filteredVenues.isEmpty {
-                AppleEmptyStateView(
-                    title: "No top clubs found",
-                    subtitle: searchText.isEmpty ? "Try adjusting your filters" : "Try a different search term",
-                    systemImage: "magnifyingglass"
-                )
-            } else {
-                List(filteredVenues) { club in
-                    NavigationLink(destination: VenueDetailView(venue: club)) {
-                        AppleTopClubRowView(venue: club, locationManager: locationManager)
+            // Material Filter Chips Section
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: MaterialSpacing.sm) {
+                    ForEach(VenueFilter.allCases, id: \.self) { filter in
+                        MaterialChip(
+                            text: filter.displayName,
+                            isSelected: selectedFilter == filter
+                        ) {
+                            withAnimation(MaterialMotion.quickFade) {
+                                selectedFilter = filter
+                            }
+                        }
                     }
                 }
-                .appleListStyle()
+                .padding(.horizontal, MaterialSpacing.screenPadding)
+            }
+            .padding(.vertical, MaterialSpacing.md)
+            .background(Color.materialSurfaceContainer)
+
+            // Material Results List
+            if filteredVenues.isEmpty {
+                RAVEEmptyStateView(
+                    title: "No top clubs found",
+                    subtitle: searchText.isEmpty ? "Try adjusting your filters" : "Try a different search term",
+                    systemImage: MaterialIcon.search
+                )
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(filteredVenues) { club in
+                            NavigationLink(destination: VenueDetailView(venue: club)) {
+                                MaterialTopClubRowView(venue: club, locationManager: locationManager)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                }
             }
         }
-        .searchable(text: $searchText, prompt: "Search top clubs")
-        .background(Color.appBackground)
+        .background(Color.materialSurface)
+        .safeAreaInset(edge: .top) {
+            MaterialSearchBar(text: $searchText, placeholder: "Search top clubs")
+                .padding(.horizontal, MaterialSpacing.screenPadding)
+                .padding(.vertical, MaterialSpacing.sm)
+                .background(Color.materialSurfaceContainer)
+        }
         .onAppear {
             setupMockData()
         }
@@ -97,68 +129,73 @@ struct TopClubsViewContent: View {
     }
 }
 
-// MARK: - Apple-Compliant Top Club Row
-struct AppleTopClubRowView: View {
+// MARK: - Material Top Club Row
+struct MaterialTopClubRowView: View {
     let venue: Venue
     let locationManager: LocationManager
 
     var body: some View {
-        HStack(spacing: AppleSpacing.medium) {
-            // Top Club Category Icon
-            Image(systemName: venue.category.systemImage)
-                .font(.title2)
-                .foregroundColor(.appPrimary)
-                .frame(width: 32, height: 32)
-                .background(Color.appTertiaryBackground)
-                .cornerRadius(8)
+        MaterialListItem {
+            HStack(spacing: MaterialSpacing.lg) {
+                // Material Club Icon
+                Image(systemName: venue.category.systemImage)
+                    .font(MaterialFont.titleMedium)
+                    .foregroundColor(.materialPrimary)
+                    .frame(width: 40, height: 40)
+                    .background(
+                        Circle()
+                            .fill(Color.materialPrimaryContainer)
+                    )
 
-            VStack(alignment: .leading, spacing: AppleSpacing.xs) {
-                Text(venue.name)
-                    .font(AppleFont.headline)
-                    .foregroundColor(.primary)
+                VStack(alignment: .leading, spacing: MaterialSpacing.xs) {
+                    Text(venue.name)
+                        .font(MaterialFont.titleMedium)
+                        .foregroundColor(.materialOnSurface)
 
-                Text(venue.location)
-                    .font(AppleFont.subheadline)
-                    .foregroundColor(.secondary)
+                    Text(venue.location)
+                        .font(MaterialFont.bodyMedium)
+                        .foregroundColor(.materialOnSurfaceVariant)
 
-                HStack(spacing: AppleSpacing.medium) {
-                    HStack(spacing: AppleSpacing.xs) {
-                        Image(systemName: "person.2")
-                            .font(.caption)
-                        Text("\(venue.checkInCount)")
-                            .font(AppleFont.footnote)
-                    }
-                    .foregroundColor(.secondary)
-
-                    if locationManager.isLocationEnabled {
-                        HStack(spacing: AppleSpacing.xs) {
-                            Image(systemName: "location")
-                                .font(.caption)
-                            Text(locationManager.formattedDistance(from: venue.coordinate))
-                                .font(AppleFont.footnote)
+                    HStack(spacing: MaterialSpacing.lg) {
+                        HStack(spacing: MaterialSpacing.xs) {
+                            Image(systemName: MaterialIcon.group)
+                                .font(MaterialFont.labelMedium)
+                            Text("\(venue.checkInCount)")
+                                .font(MaterialFont.labelMedium)
                         }
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.materialOnSurfaceVariant)
+
+                        if locationManager.isLocationEnabled {
+                            HStack(spacing: MaterialSpacing.xs) {
+                                Image(systemName: MaterialIcon.location)
+                                    .font(MaterialFont.labelMedium)
+                                Text(locationManager.formattedDistance(from: venue.coordinate))
+                                    .font(MaterialFont.labelMedium)
+                            }
+                            .foregroundColor(.materialOnSurfaceVariant)
+                        }
                     }
                 }
+
+                Spacer()
+
+                // Material disclosure indicator
+                Image(systemName: "chevron.right")
+                    .font(MaterialFont.labelMedium)
+                    .foregroundColor(.materialOnSurfaceVariant)
             }
-
-            Spacer()
-
-            // Apple-standard disclosure indicator
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundColor(.secondary)
         }
-        .padding(.vertical, AppleSpacing.small)
-        .appleAccessibility(
-            label: "\(venue.name) in \(venue.location), \(venue.checkInCount) people",
-            hint: "Tap to view venue details"
-        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(venue.name) in \(venue.location), \(venue.checkInCount) people")
+        .accessibilityHint("Tap to view venue details")
     }
 }
 
+// Legacy alias for compatibility
+typealias AppleTopClubRowView = MaterialTopClubRowView
 
-#Preview("Top Clubs View") {
+
+#Preview("Material Top Clubs View") {
     TopClubsView()
         .preferredColorScheme(.dark)
 }

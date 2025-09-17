@@ -1,6 +1,6 @@
 //
 //  MapView.swift
-//  Venues - Social Venue Discovery
+//  RAVE - Material Design 3 Map View
 //
 //  Created by Claude on 12/09/25.
 //
@@ -9,40 +9,47 @@ import SwiftUI
 import MapKit
 
 struct MapView: View {
-    var body: some View {
-        NavigationStack {
-            MapViewContent()
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        HamburgerMenuButton()
-                    }
+    @State private var isDrawerOpen = false
 
-                    ToolbarItem(placement: .principal) {
-                        Text("RAVE")
-                            .font(AppleFont.raveTitleHero)
-                            .foregroundStyle(Color.neonPurple.gradient)
-                            .kerning(-2)
-                    }
-                }
+    var body: some View {
+        ZStack {
+            VStack(spacing: 0) {
+                // Material Top App Bar
+                MaterialTopAppBar(
+                    title: "RAVE",
+                    leadingAction: {
+                        withAnimation(MaterialMotion.mediumSlide) {
+                            isDrawerOpen = true
+                        }
+                    },
+                    trailingActions: [
+                        MaterialTopAppBar.MaterialAppBarAction(
+                            icon: MaterialIcon.search,
+                            action: {
+                                // Search action
+                            }
+                        ),
+                        MaterialTopAppBar.MaterialAppBarAction(
+                            icon: MaterialIcon.more,
+                            action: {
+                                // More options action
+                            }
+                        )
+                    ]
+                )
+
+                // Map Content
+                MapViewContent()
+            }
+            .background(Color.materialSurface)
+
+            // Material Navigation Drawer
+            MaterialNavigationDrawerView(isOpen: $isDrawerOpen)
         }
     }
 }
 
-struct HamburgerMenuButton: View {
-    @State private var showingMenu = false
-
-    var body: some View {
-        Button(action: { showingMenu = true }) {
-            Image(systemName: "line.3.horizontal")
-                .font(.title3)
-                .foregroundStyle(Color.neonPurple)
-        }
-        .sheet(isPresented: $showingMenu) {
-            HamburgerMenuView()
-        }
-    }
-}
+// Legacy component - now handled by MaterialTopAppBar
 
 struct MapViewContent: View {
     @StateObject private var locationManager = LocationManager()
@@ -58,9 +65,9 @@ struct MapViewContent: View {
 
                 ForEach(venues) { venue in
                     Annotation(venue.name, coordinate: venue.coordinate) {
-                        AppleVenueAnnotation(venue: venue)
+                        MaterialVenueAnnotation(venue: venue)
                             .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.3)) {
+                                withAnimation(MaterialMotion.quickFade) {
                                     selectedVenue = venue
                                     showVenueDetail = true
                                 }
@@ -71,67 +78,56 @@ struct MapViewContent: View {
             .mapStyle(.standard)
             .ignoresSafeArea(edges: .bottom)
 
-            // Apple Location Button
+            // Material FAB for Location
             VStack {
                 HStack {
                     Spacer()
 
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            locationManager.requestLocation()
-                        }
-                    }) {
-                        Image(systemName: "location")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.appPrimary)
-                            .frame(width: 44, height: 44)
-                            .background(Color.appSecondaryBackground)
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.appSeparator, lineWidth: 0.5)
-                            )
-                    }
-                    .appleAccessibility(
-                        label: "Center map on current location",
-                        traits: .isButton
+                    MaterialFAB(
+                        icon: MaterialIcon.location,
+                        action: {
+                            withAnimation(MaterialMotion.emphasized) {
+                                locationManager.requestLocation()
+                            }
+                        },
+                        size: .normal
                     )
                 }
-                .padding(.trailing, AppleSpacing.standardPadding)
+                .padding(.trailing, MaterialSpacing.screenPadding)
 
                 Spacer()
             }
-            .padding(.top, AppleSpacing.standardPadding + 16)
+            .padding(.top, MaterialSpacing.lg)
 
-            // Apple Location Permission View
+            // Material Location Permission View
             if !locationManager.isLocationEnabled {
-                AppleLocationPermissionView(locationManager: locationManager)
+                MaterialLocationPermissionView(locationManager: locationManager)
             }
 
-            // Apple Venue Detail Sheet
+            // Material Venue Detail Sheet
             if let selectedVenue = selectedVenue {
                 VStack {
                     Spacer()
-                    AppleVenueCardView(venue: selectedVenue) {
-                        withAnimation(.easeInOut(duration: 0.3)) {
+                    MaterialVenueCardView(venue: selectedVenue) {
+                        withAnimation(MaterialMotion.quickFade) {
                             self.selectedVenue = nil
                         }
                     }
-                    .padding(.horizontal, AppleSpacing.standardPadding)
-                    .padding(.bottom, AppleSpacing.standardPadding)
+                    .padding(.horizontal, MaterialSpacing.screenPadding)
+                    .padding(.bottom, MaterialSpacing.screenPadding)
                 }
                 .background(
-                    Color.black.opacity(0.3)
+                    Color.materialScrim.opacity(0.32)
                         .ignoresSafeArea()
                         .onTapGesture {
-                            withAnimation(.easeInOut(duration: 0.3)) {
+                            withAnimation(MaterialMotion.quickFade) {
                                 self.selectedVenue = nil
                             }
                         }
                 )
             }
         }
-        .background(Color.appBackground)
+        .background(Color.materialSurface)
         .preferredColorScheme(.dark)
         .onAppear {
             setupMockData()
@@ -144,167 +140,172 @@ struct MapViewContent: View {
     }
 }
 
-// MARK: - Apple-Compliant Venue Annotation
-struct AppleVenueAnnotation: View {
+// MARK: - Material Venue Annotation
+struct MaterialVenueAnnotation: View {
     let venue: Venue
 
     var body: some View {
-        VStack(spacing: AppleSpacing.xs) {
-            // Apple Standard Map Pin
+        VStack(spacing: MaterialSpacing.xs) {
+            // Material Map Pin
             Image(systemName: venue.category.systemImage)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
+                .font(MaterialFont.labelLarge)
+                .foregroundColor(.materialOnPrimary)
                 .frame(width: 32, height: 32)
-                .background(Color.appPrimary)
-                .cornerRadius(16)
+                .background(
+                    Circle()
+                        .fill(Color.materialPrimary)
+                )
                 .overlay(
                     Circle()
-                        .stroke(Color.white, lineWidth: 2)
+                        .stroke(Color.materialOnPrimary.opacity(0.2), lineWidth: 2)
                 )
+                .materialElevation(2)
 
-            // Venue Name
+            // Material Venue Label
             Text(venue.name)
-                .font(AppleFont.caption)
-                .fontWeight(.medium)
-                .foregroundColor(.primary)
-                .padding(.horizontal, AppleSpacing.small)
-                .padding(.vertical, AppleSpacing.xs)
-                .background(Color.appSecondaryBackground)
-                .cornerRadius(6)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color.appSeparator, lineWidth: 0.5)
+                .font(MaterialFont.labelMedium)
+                .foregroundColor(.materialOnSurface)
+                .padding(.horizontal, MaterialSpacing.sm)
+                .padding(.vertical, MaterialSpacing.xs)
+                .background(
+                    RoundedRectangle(cornerRadius: MaterialShape.small, style: .continuous)
+                        .fill(Color.materialSurfaceContainerHigh)
                 )
+                .materialElevation(1)
         }
-        .appleAccessibility(
-            label: "\(venue.name), \(venue.category.rawValue)",
-            hint: "Tap to view venue details",
-            traits: .isButton
-        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(venue.name), \(venue.category.rawValue)")
+        .accessibilityHint("Tap to view venue details")
+        .accessibilityAddTraits(.isButton)
     }
 }
 
-// MARK: - Apple Location Permission View
-struct AppleLocationPermissionView: View {
+// Legacy alias for compatibility
+typealias AppleVenueAnnotation = MaterialVenueAnnotation
+
+// MARK: - Material Location Permission View
+struct MaterialLocationPermissionView: View {
     let locationManager: LocationManager
 
     var body: some View {
         VStack {
             Spacer()
 
-            VStack(spacing: AppleSpacing.large) {
-                Image(systemName: "location.slash")
-                    .font(.system(size: 48))
-                    .foregroundColor(.appSecondary)
+            MaterialCard(elevation: 3) {
+                VStack(spacing: MaterialSpacing.xxl) {
+                    Image(systemName: "location.slash")
+                        .font(.system(size: 48))
+                        .foregroundColor(.materialOnSurfaceVariant)
 
-                VStack(spacing: AppleSpacing.small) {
-                    Text("Location Access Needed")
-                        .font(AppleFont.title2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                    VStack(spacing: MaterialSpacing.md) {
+                        Text("Location Access Needed")
+                            .font(MaterialFont.headlineSmall)
+                            .foregroundColor(.materialOnSurface)
+                            .multilineTextAlignment(.center)
 
-                    Text("Enable location access to discover venues around you")
-                        .font(AppleFont.body)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
+                        Text("Enable location access to discover venues around you")
+                            .font(MaterialFont.bodyMedium)
+                            .foregroundColor(.materialOnSurfaceVariant)
+                            .multilineTextAlignment(.center)
+                    }
+
+                    MaterialButton(
+                        text: "Enable Location",
+                        style: .filled
+                    ) {
+                        locationManager.requestLocationPermission()
+                    }
                 }
-
-                Button("Enable Location") {
-                    locationManager.requestLocationPermission()
-                }
-                .applePrimaryButton()
             }
-            .padding(AppleSpacing.modalPadding)
-            .background(Color.appSecondaryBackground)
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.appSeparator, lineWidth: 0.5)
-            )
-            .padding(.horizontal, AppleSpacing.standardPadding)
+            .padding(.horizontal, MaterialSpacing.screenPadding)
 
             Spacer()
         }
-        .background(Color.black.opacity(0.3))
+        .background(Color.materialScrim.opacity(0.32))
     }
 }
 
-// MARK: - Apple Venue Card
-struct AppleVenueCardView: View {
+// Legacy alias for compatibility
+typealias AppleLocationPermissionView = MaterialLocationPermissionView
+
+// MARK: - Material Venue Card
+struct MaterialVenueCardView: View {
     let venue: Venue
     let onClose: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppleSpacing.medium) {
-            // Header with close button
-            HStack {
-                VStack(alignment: .leading, spacing: AppleSpacing.xs) {
-                    Text(venue.name)
-                        .font(AppleFont.title3)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+        MaterialCard(elevation: 3) {
+            VStack(alignment: .leading, spacing: MaterialSpacing.lg) {
+                // Header with close button
+                HStack {
+                    VStack(alignment: .leading, spacing: MaterialSpacing.xs) {
+                        Text(venue.name)
+                            .font(MaterialFont.titleLarge)
+                            .foregroundColor(.materialOnSurface)
 
-                    Text(venue.location)
-                        .font(AppleFont.body)
-                        .foregroundColor(.secondary)
+                        Text(venue.location)
+                            .font(MaterialFont.bodyMedium)
+                            .foregroundColor(.materialOnSurfaceVariant)
+                    }
+
+                    Spacer()
+
+                    Button(action: onClose) {
+                        Image(systemName: MaterialIcon.close)
+                            .font(MaterialFont.titleMedium)
+                            .foregroundColor(.materialOnSurfaceVariant)
+                    }
+                    .materialStateLayer(color: .materialOnSurface)
+                    .accessibilityLabel("Close venue details")
+                    .accessibilityAddTraits(.isButton)
                 }
 
-                Spacer()
+                // Venue Details
+                HStack(spacing: MaterialSpacing.xl) {
+                    HStack(spacing: MaterialSpacing.xs) {
+                        Image(systemName: MaterialIcon.group)
+                            .font(MaterialFont.labelMedium)
+                            .foregroundColor(.materialOnSurfaceVariant)
+                        Text("\(venue.checkInCount)")
+                            .font(MaterialFont.bodySmall)
+                            .foregroundColor(.materialOnSurfaceVariant)
+                    }
 
-                Button(action: onClose) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title3)
-                        .foregroundColor(.appSecondary)
-                }
-                .appleAccessibility(label: "Close venue details", traits: .isButton)
-            }
-
-            // Venue Details
-            HStack(spacing: AppleSpacing.large) {
-                HStack(spacing: AppleSpacing.xs) {
-                    Image(systemName: "person.2")
-                        .font(.caption)
-                        .foregroundColor(.appSecondary)
-                    Text("\(venue.checkInCount)")
-                        .font(AppleFont.footnote)
-                        .foregroundColor(.secondary)
+                    HStack(spacing: MaterialSpacing.xs) {
+                        Image(systemName: venue.category.systemImage)
+                            .font(MaterialFont.labelMedium)
+                            .foregroundColor(.materialOnSurfaceVariant)
+                        Text(venue.category.rawValue.capitalized)
+                            .font(MaterialFont.bodySmall)
+                            .foregroundColor(.materialOnSurfaceVariant)
+                    }
                 }
 
-                HStack(spacing: AppleSpacing.xs) {
-                    Image(systemName: venue.category.systemImage)
-                        .font(.caption)
-                        .foregroundColor(.appSecondary)
-                    Text(venue.category.rawValue.capitalized)
-                        .font(AppleFont.footnote)
-                        .foregroundColor(.secondary)
-                }
-            }
+                // Action Buttons
+                HStack(spacing: MaterialSpacing.md) {
+                    MaterialButton(
+                        text: "View Details",
+                        style: .filled
+                    ) {
+                        // View details action
+                    }
 
-            // Action Buttons
-            HStack(spacing: AppleSpacing.medium) {
-                Button("View Details") {
-                    // View details action
+                    MaterialButton(
+                        text: "Directions",
+                        style: .outlined
+                    ) {
+                        // Directions action
+                    }
                 }
-                .applePrimaryButton()
-
-                Button("Get Directions") {
-                    // Directions action
-                }
-                .appleSecondaryButton()
             }
         }
-        .padding(AppleSpacing.standardPadding)
-        .background(Color.appSecondaryBackground)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.appSeparator, lineWidth: 0.5)
-        )
     }
 }
 
-#Preview("Map View") {
+// Legacy alias for compatibility
+typealias AppleVenueCardView = MaterialVenueCardView
+
+#Preview("Material Map View") {
     MapView()
         .preferredColorScheme(.dark)
 }
