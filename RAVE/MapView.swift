@@ -23,6 +23,7 @@ struct MapViewContent: View {
     @State private var showVenueDetail = false
     @State private var mapLoaded = false
     @State private var showLocationButton = false
+    @State private var showSideMenu = false
     
     var body: some View {
             ZStack {
@@ -155,34 +156,77 @@ struct MapViewContent: View {
                     )
                 }
                 
-                // Extended Translucent Header
+                // Hamburger Menu in top left
                 VStack {
-                    LinearGradient(
-                        colors: [.black.opacity(0.8), .black.opacity(0.4), .black.opacity(0.1), .clear],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 150)
-                    .allowsHitTesting(false)
-                    
+                    HStack {
+                        VStack {
+                            HStack {
+                                Button(action: {
+                                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                        showSideMenu = true
+                                    }
+                                }) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(.ultraThinMaterial)
+                                            .frame(width: 40, height: 40)
+
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(.white.opacity(0.3), lineWidth: 1)
+                                            .frame(width: 40, height: 40)
+
+                                        Image(systemName: "line.3.horizontal")
+                                            .font(.system(size: 18, weight: .medium))
+                                            .foregroundColor(.ravePurple)
+                                    }
+                                }
+                                .padding(.leading, 20)
+                                Spacer()
+                            }
+                            .padding(.top, 50)
+                            Spacer()
+                        }
+                    }
+
                     Spacer()
                 }
-                .ignoresSafeArea(edges: .top)
-            }
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden()
-            .toolbar {
-                ToolbarItem(placement: .principal) {
+
+                // Custom RAVE Title Overlay (Layer 1)
+                VStack {
                     HStack {
+                        Spacer()
                         Text("RAVE")
                             .font(.system(size: 46, weight: .medium, design: .rounded))
                             .foregroundColor(.ravePurple)
+                            .kerning(4.0)
+                        Spacer()
                     }
+                    .padding(.top, 50)
+                    Spacer()
+                }
+                .zIndex(50)
+
+                // Side Menu Overlay (Layer 2 - Top Layer)
+                if showSideMenu {
+                    SideMenuView(isShowing: $showSideMenu)
+                        .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .leading)))
+                        .zIndex(100)
                 }
             }
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
+            .overlay(alignment: .top) {
+                LinearGradient(
+                    colors: [.black.opacity(0.8), .black.opacity(0.6), .black.opacity(0.4), .black.opacity(0.2), .clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 100)
+                .ignoresSafeArea(edges: .top)
+                .allowsHitTesting(false)
+            }
         .onAppear {
             setupMockData()
             locationManager.requestLocationPermission()
@@ -346,6 +390,178 @@ struct LocationPermissionView: View {
                 iconPulse = true
             }
         }
+    }
+}
+
+// MARK: - Side Menu View
+struct SideMenuView: View {
+    @Binding var isShowing: Bool
+    
+    var body: some View {
+        ZStack(alignment: .leading) {
+            // Background overlay
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                        isShowing = false
+                    }
+                }
+            
+            // Side menu panel
+            VStack(alignment: .leading, spacing: 0) {
+                // Header
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        Button(action: {
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                isShowing = false
+                            }
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(.white)
+                        }
+                        Spacer()
+                    }
+                    .padding(.top, 50)
+                    
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(Color.ravePurple.opacity(0.3))
+                            .frame(width: 60, height: 60)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.ravePurple)
+                            )
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("John Doe")
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                            
+                            Text("@johndoe_rave")
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
+                
+                // Menu Items
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        MenuItemView(icon: "person.fill", title: "Profile", destination: AnyView(UserProfileView()))
+                        MenuItemView(icon: "gearshape.fill", title: "Settings", destination: AnyView(SettingsView()))
+                        MenuItemView(icon: "lock.fill", title: "Privacy", destination: AnyView(PrivacyView()))
+                        MenuItemView(icon: "person.2.fill", title: "Friends", destination: AnyView(FriendsView()))
+                        MenuItemView(icon: "chart.bar.fill", title: "Statistics", destination: AnyView(UserStatsView()))
+                        MenuItemView(icon: "calendar.badge.clock", title: "Event History", destination: AnyView(EventHistoryView()))
+                        MenuItemView(icon: "questionmark.circle.fill", title: "Help & Support", destination: AnyView(HelpView()))
+                        MenuItemView(icon: "star.fill", title: "Premium", destination: AnyView(PremiumView()))
+                        
+                        Divider()
+                            .background(.white.opacity(0.2))
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 16)
+                        
+                        Button(action: {
+                            // Share app functionality
+                        }) {
+                            HStack(spacing: 16) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.ravePurple)
+                                    .frame(width: 24, height: 24)
+                                
+                                Text("Share App")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 16)
+                        }
+                        
+                        Button(action: {
+                            // Sign out functionality
+                        }) {
+                            HStack(spacing: 16) {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.red)
+                                    .frame(width: 24, height: 24)
+                                
+                                Text("Sign Out")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.red)
+                                
+                                Spacer()
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 16)
+                        }
+                    }
+                }
+                
+                Spacer()
+            }
+            .frame(width: 300)
+            .background(
+                ZStack {
+                    Color.deepBackground
+                    
+                    // Glassmorphism overlay
+                    Rectangle()
+                        .fill(.regularMaterial.opacity(0.8))
+                    
+                    // Particle effects
+                    if PerformanceOptimizer.shouldShowParticles() {
+                        ParticleView(
+                            count: PerformanceOptimizer.particleCount(defaultCount: 15), 
+                            color: .ravePurple.opacity(0.2)
+                        )
+                        .allowsHitTesting(false)
+                    }
+                }
+            )
+            .ignoresSafeArea()
+        }
+    }
+}
+
+struct MenuItemView: View {
+    let icon: String
+    let title: String
+    let destination: AnyView
+    
+    var body: some View {
+        NavigationLink(destination: destination) {
+            HStack(spacing: 16) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundColor(.ravePurple)
+                    .frame(width: 24, height: 24)
+                
+                Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

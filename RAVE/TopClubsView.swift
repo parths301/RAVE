@@ -59,10 +59,7 @@ struct TopClubsViewContent: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Search Bar
-            SearchBar(text: $searchText)
-            
-            // Filter Chips
+            // Filter Chips - Tight spacing after search
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(VenueFilter.allCases, id: \.self) { filter in
@@ -74,9 +71,9 @@ struct TopClubsViewContent: View {
                         }
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 16)
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 0)
             
             // Results List
             if filteredVenues.isEmpty {
@@ -92,40 +89,44 @@ struct TopClubsViewContent: View {
                     }
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0))
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
+                .contentMargins(.top, 0, for: .scrollContent)
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 100)
+                }
             }
         }
         .navigationTitle("Top Clubs")
         .navigationBarTitleDisplayMode(.large)
+        .searchable(text: $searchText, prompt: "Search venues, locations...")
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .background(
-        ZStack {
-            Color.deepBackground.ignoresSafeArea()
-            if PerformanceOptimizer.shouldShowParticles() {
-                ParticleView(
-                    count: PerformanceOptimizer.particleCount(defaultCount: 18), 
-                    color: .ravePurple.opacity(0.2)
-                )
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
+            ZStack {
+                Color.deepBackground.ignoresSafeArea()
+                if PerformanceOptimizer.shouldShowParticles() {
+                    ParticleView(
+                        count: PerformanceOptimizer.particleCount(defaultCount: 18),
+                        color: .ravePurple.opacity(0.2)
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                }
             }
-            
-            // Header Gradient Fade
-            VStack {
-                LinearGradient(
-                    colors: [.black, .black.opacity(0.4), .clear],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 100)
-                .allowsHitTesting(false)
-                
-                Spacer()
-            }
+        )
+        .overlay(alignment: .top) {
+            LinearGradient(
+                colors: [.black.opacity(0.8), .black.opacity(0.6), .black.opacity(0.4), .black.opacity(0.2), .clear],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 100)
             .ignoresSafeArea(edges: .top)
+            .allowsHitTesting(false)
         }
-    )
         .onAppear {
             setupMockData()
         }
@@ -152,41 +153,6 @@ struct TopClubsViewContent: View {
     }
 }
 
-struct SearchBar: View {
-    @Binding var text: String
-    
-    var body: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.secondary)
-            
-            TextField("Search venues, locations...", text: $text)
-                .font(RAVEFont.body)
-            
-            if !text.isEmpty {
-                Button(action: { text = "" }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.cardBackground)
-                
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.regularMaterial.opacity(0.6))
-                
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.white.opacity(0.2), lineWidth: 1)
-            }
-        )
-        .padding(.horizontal)
-    }
-}
 
 struct VenueRowView: View {
     let venue: Venue
@@ -246,8 +212,7 @@ struct VenueRowView: View {
                     .foregroundColor(.secondary)
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 16)
+        .padding()
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
@@ -260,7 +225,7 @@ struct VenueRowView: View {
                     .stroke(.white.opacity(0.2), lineWidth: 1)
             }
         )
-        .padding(.horizontal)
+        .padding(.horizontal, 10)
         .padding(.vertical, 4)
     }
 }

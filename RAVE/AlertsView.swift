@@ -36,21 +36,72 @@ struct AlertsView: View {
                         systemImage: "bell"
                     )
                 } else {
-                    List(alerts) { alert in
-                        AlertRowView(alert: alert)
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
+                    VStack(spacing: 0) {
+                        List(alerts) { alert in
+                            AlertRowView(alert: alert)
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
+                        }
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+                        
+                        // Clear All Button at Bottom
+                        VStack(spacing: 16) {
+                            Rectangle()
+                                .fill(.white.opacity(0.1))
+                                .frame(height: 0.5)
+                                .padding(.horizontal)
+                            
+                            Button(action: clearAllNotifications) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "trash.fill")
+                                        .font(.system(size: 16, weight: .semibold))
+                                    
+                                    Text("Clear All Alerts")
+                                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(Color.red.opacity(0.1))
+                                        
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(.regularMaterial.opacity(0.3))
+                                        
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(.red.opacity(0.3), lineWidth: 1)
+                                    }
+                                )
+                                .foregroundColor(.red)
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 30)
+                        }
+                        .background(Color.deepBackground)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                 }
             }
             .navigationTitle("Alerts")
             .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: toggleNotifications) {
-                        Image(systemName: notificationsEnabled ? "bell.fill" : "bell.slash")
+                    Menu {
+                        Button(action: toggleNotifications) {
+                            Label(notificationsEnabled ? "Disable Notifications" : "Enable Notifications", 
+                                  systemImage: notificationsEnabled ? "bell.slash" : "bell.fill")
+                        }
+                        
+                        if !alerts.isEmpty {
+                            Button(action: clearAllNotifications) {
+                                Label("Clear All", systemImage: "trash")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                             .foregroundColor(.ravePurple)
                     }
                 }
@@ -63,13 +114,13 @@ struct AlertsView: View {
             // Header Gradient Fade
             VStack {
                 LinearGradient(
-                    colors: [.black, .black.opacity(0.4), .clear],
+                    colors: [.black.opacity(0.8), .black.opacity(0.6), .black.opacity(0.4), .black.opacity(0.2), .clear],
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: 100)
+                .frame(height: 80)
                 .allowsHitTesting(false)
-                
+
                 Spacer()
             }
             .ignoresSafeArea(edges: .top)
@@ -106,6 +157,105 @@ struct AlertsView: View {
                 timestamp: Date().addingTimeInterval(-3600), // 1 hour ago
                 type: .venueAlert,
                 isRead: true
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "🎉 Weekend Special Event",
+                message: "Electric Lounge is hosting a special DJ set tonight starting at 10 PM!",
+                venue: LocationManager.createMockVenues()[3],
+                timestamp: Date().addingTimeInterval(-7200), // 2 hours ago
+                type: .venueActivity,
+                isRead: false
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "👥 Crew Update",
+                message: "Sarah left your crew 'Night Owls' and sent a message",
+                venue: LocationManager.createMockVenues()[0],
+                timestamp: Date().addingTimeInterval(-10800), // 3 hours ago
+                type: .groupInvite,
+                isRead: true
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "⏰ Last Call Warning",
+                message: "Midnight Club will close in 30 minutes - wrap up your night!",
+                venue: LocationManager.createMockVenues()[4],
+                timestamp: Date().addingTimeInterval(-14400), // 4 hours ago
+                type: .venueAlert,
+                isRead: true
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "🎵 New Playlist Alert",
+                message: "Rhythm Rooftop just updated their weekend playlist with fresh beats",
+                venue: LocationManager.createMockVenues()[1],
+                timestamp: Date().addingTimeInterval(-18000), // 5 hours ago
+                type: .systemAlert,
+                isRead: false
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "💫 VIP Access Available",
+                message: "Upgrade to VIP access at Starlight Lounge - limited spots remaining!",
+                venue: LocationManager.createMockVenues()[2],
+                timestamp: Date().addingTimeInterval(-21600), // 6 hours ago
+                type: .venueActivity,
+                isRead: true
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "🍸 Happy Hour Extended",
+                message: "Sky Bar extended happy hour until 8 PM - don't miss out on half-price cocktails!",
+                venue: LocationManager.createMockVenues()[3],
+                timestamp: Date().addingTimeInterval(-25200), // 7 hours ago
+                type: .venueAlert,
+                isRead: false
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "🌟 New Venue Opening",
+                message: "Cosmic Club is opening tonight! Be among the first to experience the newest hotspot",
+                venue: LocationManager.createMockVenues()[4],
+                timestamp: Date().addingTimeInterval(-28800), // 8 hours ago
+                type: .systemAlert,
+                isRead: true
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "🎭 Theme Night Alert",
+                message: "Retro Night at Groove Palace - dress code: 80s style! Prize for best outfit",
+                venue: LocationManager.createMockVenues()[0],
+                timestamp: Date().addingTimeInterval(-32400), // 9 hours ago
+                type: .venueActivity,
+                isRead: false
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "🔊 Sound System Upgrade",
+                message: "Bass Temple just installed new speakers - experience the ultimate sound quality!",
+                venue: LocationManager.createMockVenues()[1],
+                timestamp: Date().addingTimeInterval(-36000), // 10 hours ago
+                type: .systemAlert,
+                isRead: true
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "💎 Member Benefits",
+                message: "You've earned premium status! Enjoy skip-the-line access at participating venues",
+                venue: nil,
+                timestamp: Date().addingTimeInterval(-39600), // 11 hours ago
+                type: .systemAlert,
+                isRead: false
+            ),
+            RaveAlert(
+                id: UUID(),
+                title: "🚨 Weather Alert",
+                message: "Outdoor venues may close early due to incoming rain - check with venues directly",
+                venue: nil,
+                timestamp: Date().addingTimeInterval(-43200), // 12 hours ago
+                type: .systemAlert,
+                isRead: true
             )
         ]
     }
@@ -131,6 +281,12 @@ struct AlertsView: View {
             DispatchQueue.main.async {
                 notificationsEnabled = granted
             }
+        }
+    }
+    
+    private func clearAllNotifications() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            alerts.removeAll()
         }
     }
 }

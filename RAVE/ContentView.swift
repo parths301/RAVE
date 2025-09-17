@@ -48,10 +48,10 @@ enum RAVETab: String, CaseIterable {
     
     var selectedIcon: String {
         switch self {
-        case .map: return "map.circle.fill"
-        case .topClubs: return "crown.circle.fill"
-        case .crew: return "person.3.circle.fill"
-        case .alerts: return "bell.circle.fill"
+        case .map: return "map.fill"
+        case .topClubs: return "crown.fill"
+        case .crew: return "person.3.fill"
+        case .alerts: return "bell.fill"
         }
     }
 }
@@ -166,35 +166,23 @@ struct SplashScreen: View {
             
             if PerformanceOptimizer.shouldShowParticles() {
                 ParticleView(
-                    count: PerformanceOptimizer.particleCount(defaultCount: 50), 
+                    count: PerformanceOptimizer.particleCount(defaultCount: 50),
                     color: .ravePurple.opacity(0.4)
                 )
                 .opacity(particleOpacity)
                 .optimizedAnimation(.easeInOut(duration: 1.5).delay(0.5), value: particleOpacity)
+                .allowsHitTesting(false)
             }
             
-            VStack(spacing: 24) {
-                // Main Logo
-                Text("RAVE")
-                    .font(.system(size: 72, weight: .black, design: .rounded))
-                    .foregroundColor(.ravePurple)
-                    .scaleEffect(logoScale)
-                    .opacity(logoOpacity)
-                    .animation(.interactiveSpring(response: 1.2, dampingFraction: 0.6), value: logoScale)
-                    .animation(.easeInOut(duration: 1), value: logoOpacity)
-                
-                // Subtitle
-                Text("Premium Nightlife Experience")
-                    .font(RAVEFont.title2)
-                    .glassText()
-                    .opacity(logoOpacity)
-                    .animation(.easeInOut(duration: 1).delay(0.3), value: logoOpacity)
-                
-                // Pulsing Loader
-                PulsingLoader(color: .ravePurple)
-                    .opacity(logoOpacity)
-                    .animation(.easeInOut(duration: 1).delay(0.6), value: logoOpacity)
-            }
+            // Main Logo Only
+            Text("RAVE")
+                .font(.system(size: 72, weight: .black, design: .rounded))
+                .foregroundColor(.ravePurple)
+                .kerning(4.0)
+                .scaleEffect(logoScale)
+                .opacity(logoOpacity)
+                .animation(.interactiveSpring(response: 1.2, dampingFraction: 0.6), value: logoScale)
+                .animation(.easeInOut(duration: 1), value: logoOpacity)
         }
         .onAppear {
             logoScale = 1.0
