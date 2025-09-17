@@ -27,11 +27,11 @@ struct SettingsView: View {
                     title: "Push Notifications",
                     subtitle: "Receive alerts and updates",
                     icon: "bell.fill",
-                    iconColor: .ravePurple,
+                    iconColor: .appPrimary,
                     isOn: $notificationsEnabled
                 )
                 
-                NavigationLink(destination: NotificationSettingsView()) {
+                NavigationLink(destination: AppleNotificationSettingsView()) {
                     SettingRow(
                         title: "Notification Preferences",
                         subtitle: "Customize what you receive",
@@ -72,7 +72,7 @@ struct SettingsView: View {
                     }
                     
                     Slider(value: $selectedRadius, in: 1...25, step: 1)
-                        .tint(.ravePurple)
+                        .tint(.appPrimary)
                         .padding(.leading, 32)
                 }
                 .padding(.vertical, 4)
@@ -101,7 +101,7 @@ struct SettingsView: View {
                     title: "Particle Effects",
                     subtitle: "Visual effects and animations",
                     icon: "sparkles",
-                    iconColor: .ravePurple,
+                    iconColor: .appPrimary,
                     isOn: $particleEffectsEnabled
                 )
                 
@@ -228,19 +228,7 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 10), 
-                        color: .ravePurple.opacity(0.1)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color.appBackground)
     }
 }
 
@@ -315,7 +303,7 @@ struct SettingToggleRow: View {
             Spacer()
             
             Toggle("", isOn: $isOn)
-                .tint(.ravePurple)
+                .tint(.appPrimary)
         }
         .padding(.vertical, 4)
     }
@@ -381,7 +369,7 @@ struct AccountSettingsView: View {
     }
 }
 
-#Preview {
+#Preview("Settings View") {
     NavigationStack {
         SettingsView()
     }

@@ -64,19 +64,7 @@ struct EventHistoryView: View {
         }
         .navigationTitle("Event History")
         .navigationBarTitleDisplayMode(.large)
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
-                        color: .ravePurple.opacity(0.2)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color.appBackground)
         .onAppear {
             setupMockData()
         }
@@ -141,7 +129,7 @@ struct EventHistoryRowView: View {
                     
                     Text("at \(event.venueName)")
                         .font(.system(size: 16))
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                 }
                 
                 Spacer()
@@ -191,7 +179,7 @@ struct EventHistoryRowView: View {
                     
                     Text(Array(event.crewMembers.prefix(3)).joined(separator: ", "))
                         .font(.caption)
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                     
                     if event.crewMembers.count > 3 {
                         Text("and \(event.crewMembers.count - 3) more")
@@ -216,7 +204,7 @@ struct EventHistoryRowView: View {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.cardBackground)
+                    .fill(Color.appSecondaryBackground)
                 
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.regularMaterial.opacity(0.5))
@@ -247,7 +235,7 @@ struct EventHistory: Identifiable {
     let memories: String
 }
 
-#Preview {
+#Preview("Event History View") {
     NavigationStack {
         EventHistoryView()
     }

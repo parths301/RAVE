@@ -40,7 +40,7 @@ struct HelpView: View {
                     title: "Contact Support",
                     subtitle: "Get help from our team",
                     icon: "message.circle.fill",
-                    iconColor: .ravePurple
+                    iconColor: .appPrimary
                 ) {
                     // Contact support action
                 }
@@ -87,7 +87,7 @@ struct HelpView: View {
                 } header: {
                     HStack(spacing: 8) {
                         Image(systemName: section.icon)
-                            .foregroundColor(.ravePurple)
+                            .foregroundColor(.appPrimary)
                         
                         Text(section.title)
                             .foregroundColor(.white)
@@ -141,25 +141,13 @@ struct HelpView: View {
                 Button("Reset App Tutorial") {
                     // Reset tutorial
                 }
-                .foregroundColor(.ravePurple)
+                .foregroundColor(.appPrimary)
             }
         }
         .navigationTitle("Help & Support")
         .navigationBarTitleDisplayMode(.large)
         .searchable(text: $searchText, prompt: "Search help topics...")
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 10), 
-                        color: .ravePurple.opacity(0.1)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color.appBackground)
     }
     
     private func toggleExpansion(for question: String) {
@@ -254,7 +242,7 @@ struct HelpResourceRow: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .foregroundColor(.ravePurple)
+                .foregroundColor(.appPrimary)
                 .frame(width: 24)
             
             VStack(alignment: .leading, spacing: 2) {
@@ -361,7 +349,7 @@ struct FAQItem {
     let answer: String
 }
 
-#Preview {
+#Preview("Help View") {
     NavigationStack {
         HelpView()
     }

@@ -24,7 +24,7 @@ struct UserProfileView: View {
                         Circle()
                             .fill(
                                 RadialGradient(
-                                    colors: [.ravePurple.opacity(0.3), .raveNeon.opacity(0.2)],
+                                    colors: [.appPrimary.opacity(0.3), .appSecondary.opacity(0.2)],
                                     center: .center,
                                     startRadius: 10,
                                     endRadius: 80
@@ -38,7 +38,7 @@ struct UserProfileView: View {
                         
                         Image(systemName: "person.fill")
                             .font(.system(size: 48))
-                            .foregroundColor(.ravePurple)
+                            .foregroundColor(.appPrimary)
                         
                         // Edit button overlay
                         if isEditing {
@@ -50,7 +50,7 @@ struct UserProfileView: View {
                                         // Change photo functionality
                                     }) {
                                         Circle()
-                                            .fill(Color.ravePurple)
+                                            .fill(Color.appPrimary)
                                             .frame(width: 32, height: 32)
                                             .overlay(
                                                 Image(systemName: "camera.fill")
@@ -136,7 +136,7 @@ struct UserProfileView: View {
                     .background(
                         ZStack {
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.cardBackground)
+                                .fill(Color.appSecondaryBackground)
                             
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(.regularMaterial.opacity(0.5))
@@ -158,7 +158,7 @@ struct UserProfileView: View {
                             icon: "location.fill",
                             title: "Checked in at Neon Nights",
                             time: "2 hours ago",
-                            iconColor: .ravePurple
+                            iconColor: .appPrimary
                         )
                         
                         ActivityItemView(
@@ -180,7 +180,7 @@ struct UserProfileView: View {
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.cardBackground)
+                            .fill(Color.appSecondaryBackground)
                         
                         RoundedRectangle(cornerRadius: 16)
                             .fill(.regularMaterial.opacity(0.5))
@@ -194,19 +194,7 @@ struct UserProfileView: View {
         }
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
-                        color: .ravePurple.opacity(0.2)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color.appBackground)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -215,7 +203,7 @@ struct UserProfileView: View {
                     }
                 }) {
                     Text(isEditing ? "Save" : "Edit")
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                 }
             }
         }
@@ -231,7 +219,7 @@ struct StatCardView: View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.system(size: 24))
-                .foregroundColor(.ravePurple)
+                .foregroundColor(.appPrimary)
             
             Text(value)
                 .font(.system(size: 20, weight: .bold))
@@ -248,7 +236,7 @@ struct StatCardView: View {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.cardBackground)
+                    .fill(Color.appSecondaryBackground)
                 
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.regularMaterial.opacity(0.5))
@@ -287,7 +275,7 @@ struct ProfileSectionView: View {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.cardBackground)
+                    .fill(Color.appSecondaryBackground)
                 
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.regularMaterial.opacity(0.5))
@@ -311,7 +299,7 @@ struct PreferenceChip: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(isSelected ? Color.ravePurple : .clear)
+                    .fill(isSelected ? Color.appPrimary : .clear)
                     .overlay(
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(.white.opacity(0.3), lineWidth: 1)
@@ -353,7 +341,7 @@ struct ActivityItemView: View {
     }
 }
 
-#Preview {
+#Preview("User Profile View") {
     NavigationStack {
         UserProfileView()
     }

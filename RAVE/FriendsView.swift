@@ -44,19 +44,7 @@ struct FriendsView: View {
         .navigationTitle("Friends")
         .navigationBarTitleDisplayMode(.large)
         .searchable(text: $searchText, prompt: "Search friends...")
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 15), 
-                        color: .ravePurple.opacity(0.2)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color.appBackground)
         .onAppear {
             setupMockData()
         }
@@ -169,7 +157,7 @@ struct DiscoverFriendsView: View {
                         HStack(spacing: 12) {
                             Image(systemName: "square.and.arrow.up.fill")
                                 .font(.system(size: 20))
-                                .foregroundColor(.ravePurple)
+                                .foregroundColor(.appPrimary)
                             
                             Text("Share RAVE with Friends")
                                 .font(.system(size: 16, weight: .medium))
@@ -185,7 +173,7 @@ struct DiscoverFriendsView: View {
                         .background(
                             ZStack {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.cardBackground)
+                                    .fill(Color.appSecondaryBackground)
                                 
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(.regularMaterial.opacity(0.5))
@@ -210,7 +198,7 @@ struct DiscoverFriendsView: View {
                         Button("See All") {
                             // Show all suggestions
                         }
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                     }
                     .padding(.horizontal)
                     
@@ -233,12 +221,12 @@ struct FriendRowView: View {
             // Profile Picture
             ZStack {
                 Circle()
-                    .fill(Color.ravePurple.opacity(0.3))
+                    .fill(Color.appPrimary.opacity(0.3))
                     .frame(width: 50, height: 50)
                 
                 Image(systemName: "person.fill")
                     .font(.system(size: 20))
-                    .foregroundColor(.ravePurple)
+                    .foregroundColor(.appPrimary)
                 
                 // Online status indicator
                 if friend.isOnline {
@@ -251,7 +239,7 @@ struct FriendRowView: View {
                                 .frame(width: 12, height: 12)
                                 .overlay(
                                     Circle()
-                                        .stroke(Color.deepBackground, lineWidth: 2)
+                                        .stroke(Color.appBackground, lineWidth: 2)
                                 )
                         }
                     }
@@ -272,11 +260,11 @@ struct FriendRowView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "location.fill")
                             .font(.caption2)
-                            .foregroundColor(.ravePurple)
+                            .foregroundColor(.appPrimary)
                         
                         Text("at \(venue)")
                             .font(.caption)
-                            .foregroundColor(.ravePurple)
+                            .foregroundColor(.appPrimary)
                     }
                 }
             }
@@ -300,7 +288,7 @@ struct FriendRowView: View {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.cardBackground)
+                    .fill(Color.appSecondaryBackground)
                 
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.regularMaterial.opacity(0.5))
@@ -322,12 +310,12 @@ struct FriendRequestRowView: View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
                 Circle()
-                    .fill(Color.ravePurple.opacity(0.3))
+                    .fill(Color.appPrimary.opacity(0.3))
                     .frame(width: 50, height: 50)
                     .overlay(
                         Image(systemName: "person.fill")
                             .font(.system(size: 20))
-                            .foregroundColor(.ravePurple)
+                            .foregroundColor(.appPrimary)
                     )
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -341,7 +329,7 @@ struct FriendRequestRowView: View {
                     
                     Text("\(request.mutualFriends) mutual friends")
                         .font(.caption)
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                 }
                 
                 Spacer()
@@ -354,7 +342,7 @@ struct FriendRequestRowView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 8)
-                .background(Color.ravePurple)
+                .background(Color.appPrimary)
                 .cornerRadius(20)
                 
                 Button("Decline") {
@@ -373,7 +361,7 @@ struct FriendRequestRowView: View {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.cardBackground)
+                    .fill(Color.appSecondaryBackground)
                 
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.regularMaterial.opacity(0.5))
@@ -394,12 +382,12 @@ struct SuggestionRowView: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(Color.ravePurple.opacity(0.3))
+                .fill(Color.appPrimary.opacity(0.3))
                 .frame(width: 50, height: 50)
                 .overlay(
                     Image(systemName: "person.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(.ravePurple)
+                        .foregroundColor(.appPrimary)
                 )
             
             VStack(alignment: .leading, spacing: 4) {
@@ -424,7 +412,7 @@ struct SuggestionRowView: View {
             .foregroundColor(isRequested ? .secondary : .white)
             .padding(.horizontal, 16)
             .padding(.vertical, 6)
-            .background(isRequested ? Color.gray.opacity(0.3) : Color.ravePurple)
+            .background(isRequested ? Color.gray.opacity(0.3) : Color.appPrimary)
             .cornerRadius(16)
             .disabled(isRequested)
         }
@@ -432,7 +420,7 @@ struct SuggestionRowView: View {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.cardBackground)
+                    .fill(Color.appSecondaryBackground)
                 
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.regularMaterial.opacity(0.5))
@@ -454,12 +442,12 @@ struct FriendDetailView: View {
                 VStack(spacing: 16) {
                     ZStack {
                         Circle()
-                            .fill(Color.ravePurple.opacity(0.3))
+                            .fill(Color.appPrimary.opacity(0.3))
                             .frame(width: 120, height: 120)
                         
                         Image(systemName: "person.fill")
                             .font(.system(size: 48))
-                            .foregroundColor(.ravePurple)
+                            .foregroundColor(.appPrimary)
                         
                         if friend.isOnline {
                             VStack {
@@ -471,7 +459,7 @@ struct FriendDetailView: View {
                                         .frame(width: 24, height: 24)
                                         .overlay(
                                             Circle()
-                                                .stroke(Color.deepBackground, lineWidth: 3)
+                                                .stroke(Color.appBackground, lineWidth: 3)
                                         )
                                 }
                             }
@@ -491,11 +479,11 @@ struct FriendDetailView: View {
                         if let venue = friend.currentVenue {
                             HStack(spacing: 6) {
                                 Image(systemName: "location.fill")
-                                    .foregroundColor(.ravePurple)
+                                    .foregroundColor(.appPrimary)
                                 
                                 Text("Currently at \(venue)")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.ravePurple)
+                                    .foregroundColor(.appPrimary)
                             }
                         }
                     }
@@ -509,13 +497,13 @@ struct FriendDetailView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.ravePurple)
+                    .background(Color.appPrimary)
                     .cornerRadius(12)
                     
                     Button("View Profile") {
                         // View full profile
                     }
-                    .foregroundColor(.ravePurple)
+                    .foregroundColor(.appPrimary)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(.regularMaterial.opacity(0.3))
@@ -527,19 +515,7 @@ struct FriendDetailView: View {
         }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
-        .background(
-            ZStack {
-                Color.deepBackground.ignoresSafeArea()
-                if PerformanceOptimizer.shouldShowParticles() {
-                    ParticleView(
-                        count: PerformanceOptimizer.particleCount(defaultCount: 10), 
-                        color: .ravePurple.opacity(0.1)
-                    )
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                }
-            }
-        )
+        .background(Color.appBackground)
     }
 }
 
@@ -565,7 +541,7 @@ enum FriendRequestAction {
     case decline
 }
 
-#Preview {
+#Preview("Friends View") {
     NavigationStack {
         FriendsView()
     }
